@@ -327,7 +327,7 @@ void MainWindow::StitchOvr(cv::Mat temp,cv::Mat& Output)
 }
 
 
-void MainWindow::Stitch(cv::Mat temp)
+void MainWindow::Stitch(cv::Mat &temp)
 {
     int minHessian = 400;
     cv::SiftFeatureDetector detector(minHessian);
@@ -635,6 +635,7 @@ void MainWindow::on_LoadButton_clicked()
 
 void MainWindow::on_Merger_2Buttom_clicked()
 {
+    TWarp.clear();
      std::vector< cv::Mat > vImg;
      std::vector< cv::Mat > img_warp;
      //std::vector< cv::Mat > mask_warp;
@@ -652,8 +653,9 @@ void MainWindow::on_Merger_2Buttom_clicked()
 
      cv::Stitch stitcher = cv::Stitch::createDefault();
      qDebug()<<"0";
+     ui->progressBar_Merge->setValue(5);
      cv::Stitch::Status status = stitcher.stitch2(vImg, rImg,img_warp,nodilate_warp,dilate_mask);
-
+     ui->progressBar_Merge->setValue(25);
      qDebug()<<"1";
 
      do
@@ -677,7 +679,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
 
     cv::Mat resultTemp;
 
-
+    ui->progressBar_Merge->setValue(75);
     for(int i = 0;i<img_warp.size();i++)
     {
         resultTemp = cv::Mat(img_warp[i].rows,img_warp[i].cols,CV_8UC3);
@@ -711,7 +713,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
     ui->labelwarp3->clear();
     ui->labelwarp4->clear();
 
-
+    ui->progressBar_Merge->setValue(95);
     QImage wimg1 = QImage((const unsigned char*)(TWarp[0].data),TWarp[0].cols,TWarp[0].rows,TWarp[0].step,QImage::Format_RGB888);
     QImage wimg2 = QImage((const unsigned char*)(TWarp[1].data),TWarp[1].cols,TWarp[1].rows,TWarp[1].step,QImage::Format_RGB888);
     QImage wimg3 = QImage((const unsigned char*)(TWarp[2].data),TWarp[2].cols,TWarp[2].rows,TWarp[2].step,QImage::Format_RGB888);
@@ -728,6 +730,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
 
     ui->labelwarp4->setPixmap(QPixmap::fromImage(wimg4.scaled(ui->labelwarp4->width(),ui->labelwarp4->height(),Qt::KeepAspectRatio)));
     ui->labelwarp4->show();
+    ui->progressBar_Merge->setValue(100);
 }
 
 
@@ -821,31 +824,20 @@ void MainWindow::on_horizontalSlider_frame4_sliderMoved(int position)
 }
 
 
-void MainWindow::on_pushButton_clicked()
-{
-    ui->textBrowser->clear();
-    ui->lineEdit->text();
-    ui->textBrowser->append(ui->lineEdit->text());
 
-}
 
-void MainWindow::on_checkBox_clicked()
-{
-    if(ui->checkBox->isChecked() == true)
-    {
-        QTextCodec *codec = QTextCodec::codecForName("Big5");
-        ui->textBrowser->append(codec->toUnicode("要輸入的字"));
-    }
-}
+
 
 void MainWindow::on_Fake_Buttom_clicked()
 {
     std::vector<cv::Mat> fakeresult;
-    Fake_r(TWarp,fakeresult);
+    displace.clear();
+    //std::vector<cv::Point> displace;
+    Fake_r(TWarp,fakeresult,displace);
 
 }
 
-void MainWindow::Fake_r(std::vector<cv::Mat> temp,std::vector<cv::Mat> fakeresult)
+void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeresult,std::vector<cv::Point> &displacement)
 {
     int minHessian = 400;
     cv::SiftFeatureDetector detector(minHessian);
@@ -903,17 +895,42 @@ void MainWindow::Fake_r(std::vector<cv::Mat> temp,std::vector<cv::Mat> fakeresul
         }
         x = x/total;
         y = y/total;
-        cv::Mat tr;
+
         cv::Mat good;
-        //cv::drawKeypoints(temp[0],keypoints1,tempresult,cv::Scalar::all(-1),cv::DrawMatchesFlags::DEFAULT);
-        //cv::drawKeypoints(temp[number],keypoints2,tr,cv::Scalar::all(-1),cv::DrawMatchesFlags::DEFAULT);
         qDebug()<<x<<y;
 
         cv::drawMatches(rImg,keypoints1,temp[number],keypoints2,good_matches,good,cv::Scalar::all(-1),cv::Scalar::all(-1),cv::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        //cv::circle(tempresult,cv::Point(x,y),1,cv::Scalar(0,0,255),1,CV_AA,0);
-        //cv::imshow("circle"+QString::number(number).toStdString(),tempresult);
-        //cv::imshow(QString::number(number).toStdString(),tr);
+        cv::circle(good,cv::Point(x,y),5,cv::Scalar(0,0,255));
         cv::imshow("good"+QString::number(number).toStdString(),good);
-
+        fakeresult.push_back(good);
+        cv::Point p = cv::Point(x,y);
+        displacement.push_back(p);
     }
+}
+
+void MainWindow::on_ShowButton_clicked()
+{
+    cv::Mat temp;
+    qDebug()<<TWarp.size() << displace.size();
+    temp.create(rImg.rows,rImg.cols,rImg.type());
+    temp = cv::Scalar::all(0);
+    for(int number=0;number<TWarp.size();number++)
+    {
+        for(int i = 0;i<TWarp[number].cols;i++)
+        {
+            for(int j=0;j<TWarp[number].rows;j++)
+            {
+                int x = displace[number].x;
+                int y = displace[number].y;
+                if(TWarp[number].at<cv::Vec3b>(j,i)[0] <20 &&TWarp[number].at<cv::Vec3b>(j,i)[1] <20 &&TWarp[number].at<cv::Vec3b>(j,i)[2] <20)
+                {
+                    temp.at<cv::Vec3b>(j+x,i+y)[0] = 255;
+                    temp.at<cv::Vec3b>(j+x,i+y)[1] = 255;
+                    temp.at<cv::Vec3b>(j+x,i+y)[2] = 255;
+                }
+            }
+        }
+    }
+    cv::imshow("test",temp);
+
 }

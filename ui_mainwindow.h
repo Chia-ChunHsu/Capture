@@ -13,16 +13,14 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
@@ -54,11 +52,6 @@ public:
     QSlider *horizontalSlider_frame2;
     QSlider *horizontalSlider_frame3;
     QSlider *horizontalSlider_frame4;
-    QLineEdit *lineEdit;
-    QLabel *label;
-    QTextBrowser *textBrowser;
-    QPushButton *pushButton;
-    QCheckBox *checkBox;
     QLabel *labelwarp1;
     QLabel *labelwarp2;
     QLabel *labelwarp3;
@@ -69,6 +62,8 @@ public:
     QLabel *labelaffect3;
     QLabel *labelaffect4;
     QPushButton *Fake_Buttom;
+    QProgressBar *progressBar_Merge;
+    QPushButton *ShowButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -85,7 +80,7 @@ public:
         StartButton->setGeometry(QRect(20, 320, 311, 41));
         closeButton = new QPushButton(centralWidget);
         closeButton->setObjectName(QStringLiteral("closeButton"));
-        closeButton->setGeometry(QRect(630, 550, 171, 61));
+        closeButton->setGeometry(QRect(370, 550, 171, 61));
         label1 = new QLabel(centralWidget);
         label1->setObjectName(QStringLiteral("label1"));
         label1->setGeometry(QRect(20, 10, 160, 120));
@@ -159,21 +154,6 @@ public:
         horizontalSlider_frame4->setGeometry(QRect(190, 290, 160, 19));
         horizontalSlider_frame4->setMaximum(255);
         horizontalSlider_frame4->setOrientation(Qt::Horizontal);
-        lineEdit = new QLineEdit(centralWidget);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
-        lineEdit->setGeometry(QRect(470, 560, 113, 20));
-        label = new QLabel(centralWidget);
-        label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(500, 630, 81, 41));
-        textBrowser = new QTextBrowser(centralWidget);
-        textBrowser->setObjectName(QStringLiteral("textBrowser"));
-        textBrowser->setGeometry(QRect(610, 621, 256, 71));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(360, 640, 75, 23));
-        checkBox = new QCheckBox(centralWidget);
-        checkBox->setObjectName(QStringLiteral("checkBox"));
-        checkBox->setGeometry(QRect(180, 650, 73, 16));
         labelwarp1 = new QLabel(centralWidget);
         labelwarp1->setObjectName(QStringLiteral("labelwarp1"));
         labelwarp1->setGeometry(QRect(370, 280, 160, 120));
@@ -213,6 +193,13 @@ public:
         Fake_Buttom = new QPushButton(centralWidget);
         Fake_Buttom->setObjectName(QStringLiteral("Fake_Buttom"));
         Fake_Buttom->setGeometry(QRect(20, 560, 311, 51));
+        progressBar_Merge = new QProgressBar(centralWidget);
+        progressBar_Merge->setObjectName(QStringLiteral("progressBar_Merge"));
+        progressBar_Merge->setGeometry(QRect(20, 630, 311, 23));
+        progressBar_Merge->setValue(0);
+        ShowButton = new QPushButton(centralWidget);
+        ShowButton->setObjectName(QStringLiteral("ShowButton"));
+        ShowButton->setGeometry(QRect(550, 550, 161, 61));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -251,9 +238,6 @@ public:
         Save4Button->setText(QApplication::translate("MainWindow", "Save 4", 0));
         LoadButton->setText(QApplication::translate("MainWindow", "Load", 0));
         Merger_2Buttom->setText(QApplication::translate("MainWindow", "Merge2", 0));
-        label->setText(QApplication::translate("MainWindow", "TextLabel", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
-        checkBox->setText(QApplication::translate("MainWindow", "CheckBox", 0));
         labelwarp1->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         labelwarp2->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         labelwarp3->setText(QApplication::translate("MainWindow", "TextLabel", 0));
@@ -264,6 +248,7 @@ public:
         labelaffect3->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         labelaffect4->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         Fake_Buttom->setText(QApplication::translate("MainWindow", "Fake", 0));
+        ShowButton->setText(QApplication::translate("MainWindow", "Show", 0));
     } // retranslateUi
 
 };

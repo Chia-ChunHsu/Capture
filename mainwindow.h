@@ -28,10 +28,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void Stitch(cv::Mat temp);
-    void StitchOvr(cv::Mat temp,cv::Mat& Output);
-    void Fake_r(std::vector<cv::Mat> temp,std::vector<cv::Mat> fakeresult);
-
+    void Stitch(cv::Mat &temp);
+    void StitchOvr(cv::Mat temp,cv::Mat &Output);
+    void Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeresult,std::vector<cv::Point> &displacement );
+    //void Caculate_dxdy(int x, int y);
 private slots:
     void on_StartButton_clicked();
 
@@ -68,12 +68,9 @@ private slots:
     void on_horizontalSlider_frame4_sliderMoved(int position);
 
 
-    void on_pushButton_clicked();
-
-    void on_checkBox_clicked();
-
-
     void on_Fake_Buttom_clicked();
+
+    void on_ShowButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -109,6 +106,9 @@ private:
 
     std::vector<cv::Ptr<cv::detail::Blender>> blender_2;
     std::vector<cv::Mat> dilate_mask;
+
+
+    std::vector<cv::Point> displace;
 
 };
 

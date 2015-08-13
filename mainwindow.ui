@@ -30,7 +30,7 @@
    <widget class="QPushButton" name="closeButton">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>370</x>
       <y>550</y>
       <width>171</width>
       <height>61</height>
@@ -327,65 +327,6 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>560</y>
-      <width>113</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>630</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>621</y>
-      <width>256</width>
-      <height>71</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>640</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>650</y>
-      <width>73</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CheckBox</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelwarp1">
     <property name="geometry">
      <rect>
@@ -541,6 +482,32 @@
     </property>
     <property name="text">
      <string>Fake</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_Merge">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>630</y>
+      <width>311</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ShowButton">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>550</y>
+      <width>161</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show</string>
     </property>
    </widget>
   </widget>
