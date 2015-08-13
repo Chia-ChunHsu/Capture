@@ -1,0 +1,17 @@
+Makefile
+Makefile.Debug
+Makefile.Release
+debug/
+frame1.jpg
+frame2.jpg
+frame3.jpg
+frame4.jpg
+Capture.pro.user.67fe7ef
+Capture.pro.user.e0f9faf
+matchers.cpp
+matchers.hpp
+motion_estimators.cpp
+result.jpg
+myblender.cpp
+myblender.h
+motion_estimators.hpp
