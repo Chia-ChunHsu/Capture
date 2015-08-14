@@ -72,6 +72,10 @@ private slots:
 
     void on_ShowButton_clicked();
 
+    void on_TempDataButtom_clicked();
+
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

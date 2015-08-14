@@ -64,6 +64,8 @@ public:
     QPushButton *Fake_Buttom;
     QProgressBar *progressBar_Merge;
     QPushButton *ShowButton;
+    QPushButton *TempDataButtom;
+    QPushButton *pushButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -200,6 +202,12 @@ public:
         ShowButton = new QPushButton(centralWidget);
         ShowButton->setObjectName(QStringLiteral("ShowButton"));
         ShowButton->setGeometry(QRect(550, 550, 161, 61));
+        TempDataButtom = new QPushButton(centralWidget);
+        TempDataButtom->setObjectName(QStringLiteral("TempDataButtom"));
+        TempDataButtom->setGeometry(QRect(750, 570, 121, 41));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(370, 620, 341, 51));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -249,6 +257,8 @@ public:
         labelaffect4->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         Fake_Buttom->setText(QApplication::translate("MainWindow", "Fake", 0));
         ShowButton->setText(QApplication::translate("MainWindow", "Show", 0));
+        TempDataButtom->setText(QApplication::translate("MainWindow", "Load_temp_data", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Calibration", 0));
     } // retranslateUi
 
 };

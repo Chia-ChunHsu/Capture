@@ -635,7 +635,7 @@ void MainWindow::on_LoadButton_clicked()
 
 void MainWindow::on_Merger_2Buttom_clicked()
 {
-    TWarp.clear();
+     TWarp.clear();
      std::vector< cv::Mat > vImg;
      std::vector< cv::Mat > img_warp;
      //std::vector< cv::Mat > mask_warp;
@@ -654,7 +654,10 @@ void MainWindow::on_Merger_2Buttom_clicked()
      cv::Stitch stitcher = cv::Stitch::createDefault();
      qDebug()<<"0";
      ui->progressBar_Merge->setValue(5);
-     cv::Stitch::Status status = stitcher.stitch2(vImg, rImg,img_warp,nodilate_warp,dilate_mask);
+     cv::Stitch::Status status;
+
+     status = stitcher.stitch2(vImg, rImg,img_warp,nodilate_warp,dilate_mask);
+
      ui->progressBar_Merge->setValue(25);
      qDebug()<<"1";
 
@@ -835,6 +838,7 @@ void MainWindow::on_Fake_Buttom_clicked()
     //std::vector<cv::Point> displace;
     Fake_r(TWarp,fakeresult,displace);
 
+
 }
 
 void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeresult,std::vector<cv::Point> &displacement)
@@ -901,7 +905,7 @@ void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeres
 
         cv::drawMatches(rImg,keypoints1,temp[number],keypoints2,good_matches,good,cv::Scalar::all(-1),cv::Scalar::all(-1),cv::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         cv::circle(good,cv::Point(x,y),5,cv::Scalar(0,0,255));
-        cv::imshow("good"+QString::number(number).toStdString(),good);
+        //cv::imshow("good"+QString::number(number).toStdString(),good);
         fakeresult.push_back(good);
         cv::Point p = cv::Point(x,y);
         displacement.push_back(p);
@@ -912,25 +916,48 @@ void MainWindow::on_ShowButton_clicked()
 {
     cv::Mat temp;
     qDebug()<<TWarp.size() << displace.size();
-    temp.create(rImg.rows,rImg.cols,rImg.type());
+    //cv::Mat rImgTemp;
+    //cv::cvtColor(rImgTemp,rImg,CV_GRAY2BGR);
+    cv::Size size(rImg.cols,rImg.rows);
+    temp.create(size,CV_MAKETYPE(temp.type(),3));
     temp = cv::Scalar::all(0);
+    qDebug()<<TWarp[0].cols<<TWarp[0].rows<<rImg.channels()<<temp.channels()<<TWarp[0].channels()<<TWarp[1].channels()<<TWarp[2].channels()<<TWarp[3].channels();
     for(int number=0;number<TWarp.size();number++)
     {
+        qDebug()<<number;
         for(int i = 0;i<TWarp[number].cols;i++)
         {
             for(int j=0;j<TWarp[number].rows;j++)
             {
+                //qDebug()<<j<<i;
+                //qDebug()<<"0";
                 int x = displace[number].x;
                 int y = displace[number].y;
-                if(TWarp[number].at<cv::Vec3b>(j,i)[0] <20 &&TWarp[number].at<cv::Vec3b>(j,i)[1] <20 &&TWarp[number].at<cv::Vec3b>(j,i)[2] <20)
+                if((TWarp[number].at<cv::Vec3b>(j,i)[0]+TWarp[number].at<cv::Vec3b>(j,i)[1]+TWarp[number].at<cv::Vec3b>(j,i)[2])/3 <20)
                 {
-                    temp.at<cv::Vec3b>(j+x,i+y)[0] = 255;
-                    temp.at<cv::Vec3b>(j+x,i+y)[1] = 255;
-                    temp.at<cv::Vec3b>(j+x,i+y)[2] = 255;
+                    if(j+x<rImg.rows && i+y<rImg.cols)
+                    {
+                        temp.at<cv::Vec3b>(j+x,i+y)[0] = rImg.at<cv::Vec3b>(j+x,i+y)[0];
+                        temp.at<cv::Vec3b>(j+x,i+y)[1] = rImg.at<cv::Vec3b>(j+x,i+y)[1];
+                        temp.at<cv::Vec3b>(j+x,i+y)[2] = rImg.at<cv::Vec3b>(j+x,i+y)[2];
+//                        temp.at<cv::Vec3b>(j+x,i+y)[0] = 0;
+//                        temp.at<cv::Vec3b>(j+x,i+y)[1] = 0;
+//                        temp.at<cv::Vec3b>(j+x,i+y)[2] = 0;
+                    }
                 }
             }
         }
     }
     cv::imshow("test",temp);
+
+}
+
+void MainWindow::on_TempDataButtom_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
 
 }

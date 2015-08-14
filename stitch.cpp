@@ -58,10 +58,11 @@ Stitch::Status Stitch::estimateTransform(InputArray images, const vector<vector<
     rois_ = rois;
 
     Status status;
-
+    qDebug()<<"0001";
     if ((status = matchImages()) != OK)
         return status;
 
+    qDebug()<<"0002";
     estimateCameraParams();
 
     return OK;
@@ -75,6 +76,7 @@ Stitch::Status Stitch::composePanorama(OutputArray pano)
 
 Stitch::Status Stitch::composePanorama2(OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask)
 {
+    qDebug()<<"000";
     return composePanorama2(vector<Mat>(), pano,img_warp,nodilate_mask,dilate_mask);
 }
 
@@ -306,13 +308,13 @@ Stitch::Status Stitch::composePanorama(InputArray images, OutputArray pano )
 Stitch::Status Stitch::composePanorama2(InputArray images, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask)
 {
     LOGLN("Warping images (auxiliary)... ");
-
+    qDebug()<<"001";
     vector<Mat> imgs;
     images.getMatVector(imgs);
     if (!imgs.empty())
     {
+        qDebug()<<"002";
         CV_Assert(imgs.size() == imgs_.size());
-
         Mat img;
         seam_est_imgs_.resize(imgs.size());
 
@@ -342,7 +344,7 @@ Stitch::Status Stitch::composePanorama2(InputArray images, OutputArray pano, std
 #if ENABLE_LOG
     int64 t = getTickCount();
 #endif
-
+    qDebug()<<"003";
     vector<Point> corners(imgs_.size());
     vector<Mat> masks_warped(imgs_.size());
     vector<Mat> images_warped(imgs_.size());
@@ -355,7 +357,6 @@ Stitch::Status Stitch::composePanorama2(InputArray images, OutputArray pano, std
         masks[i].create(seam_est_imgs_[i].size(), CV_8U);
         masks[i].setTo(Scalar::all(255));
     }
-
     // Warp images and their masks
     Ptr<detail::RotationWarper> w = warper_->create(float(warped_image_scale_ * seam_work_aspect_));
     for (size_t i = 0; i < imgs_.size(); ++i)
@@ -543,7 +544,9 @@ Stitch::Status Stitch::stitch(InputArray images, OutputArray pano)
 
 Stitch::Status Stitch::stitch2(InputArray images, OutputArray pano, std::vector<cv::Mat> &img_warp, std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask)
 {
+    qDebug()<<"0-0";
     Status status = estimateTransform(images);
+    qDebug()<<"-00";
     if (status != OK)
         return status;
     return composePanorama2(pano,img_warp, nodilate_mask,dilate_mask);
@@ -561,12 +564,14 @@ Stitch::Status Stitch::stitch(InputArray images, const vector<vector<Rect> > &ro
 
 Stitch::Status Stitch::matchImages()
 {
+    qDebug()<<"0003";
     if ((int)imgs_.size() < 2)
     {
         LOGLN("Need more images");
+        qDebug()<<"0005";
         return ERR_NEED_MORE_IMGS;
     }
-
+    qDebug()<<"0004";
     work_scale_ = 1;
     seam_work_aspect_ = 1;
     seam_scale_ = 1;
@@ -635,18 +640,20 @@ Stitch::Status Stitch::matchImages()
     img.release();
 
     LOGLN("Finding features, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
-
+    qDebug()<<"0006";
     LOG("Pairwise matching");
 #if ENABLE_LOG
     t = getTickCount();
 #endif
+    qDebug()<<"0011";
     (*features_matcher_)(features_, pairwise_matches_, matching_mask_);
+    qDebug()<<"0013";
     features_matcher_->collectGarbage();
-
+    qDebug()<<"0012";
 
 
     LOGLN("Pairwise matching, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
-
+    qDebug()<<"0008";
     // Leave only images we are sure are from the same panorama
     indices_ = detail::leaveBiggestComponent(features_, pairwise_matches_, (float)conf_thresh_);
     vector<Mat> seam_est_imgs_subset;
@@ -658,6 +665,7 @@ Stitch::Status Stitch::matchImages()
         seam_est_imgs_subset.push_back(seam_est_imgs_[indices_[i]]);
         full_img_sizes_subset.push_back(full_img_sizes_[indices_[i]]);
     }
+    qDebug()<<"0009";
     seam_est_imgs_ = seam_est_imgs_subset;
     imgs_ = imgs_subset;
     full_img_sizes_ = full_img_sizes_subset;
@@ -665,7 +673,7 @@ Stitch::Status Stitch::matchImages()
 
 
 
-
+    qDebug()<<"0007";
     if ((int)imgs_.size() < 2)
     {
         LOGLN("Need more images");
