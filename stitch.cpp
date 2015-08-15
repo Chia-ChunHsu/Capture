@@ -646,7 +646,14 @@ Stitch::Status Stitch::matchImages()
     t = getTickCount();
 #endif
     qDebug()<<"0011";
-    (*features_matcher_)(features_, pairwise_matches_, matching_mask_);
+    qDebug()<<features_.size()<<pairwise_matches_.size();//<<matching_mask_.size();
+    while(pairwise_matches_.size()==0)
+    {
+        (*features_matcher_)(features_, pairwise_matches_, matching_mask_);
+    }
+
+    qDebug()<<features_.size()<<pairwise_matches_.size();
+    //cv::imshow("matching_mask_",matching_mask_);
     qDebug()<<"0013";
     features_matcher_->collectGarbage();
     qDebug()<<"0012";

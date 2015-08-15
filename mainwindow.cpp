@@ -321,6 +321,7 @@ void MainWindow::StitchOvr(cv::Mat temp,cv::Mat& Output)
 //        ui->label1->clear();
 //        ui->label1->setPixmap(QPixmap::fromImage(img1.scaled(ui->label1->width(),ui->label1->height(),Qt::KeepAspectRatio)));
     QImage imgResult = QImage((const unsigned char*)(result.data),result.cols,result.rows,QImage::Format_RGB888);
+
     ui->labelresult->clear();
     ui->labelresult->setPixmap(QPixmap::fromImage(imgResult.scaled(ui->labelresult->width(),ui->labelresult->height(),Qt::KeepAspectRatio)));
     ui->labelresult->show();
