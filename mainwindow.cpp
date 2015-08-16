@@ -649,7 +649,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
      vImg.push_back(QTemp3);
      vImg.push_back(QTemp4);
 
-     std::vector<cv::Mat> nodilate_warp;
+     //std::vector<cv::Mat> nodilate_warp;
 
 
      cv::Stitch stitcher = cv::Stitch::createDefault();
@@ -941,9 +941,6 @@ void MainWindow::on_ShowButton_clicked()
                         temp.at<cv::Vec3b>(j+x,i+y)[0] = rImg.at<cv::Vec3b>(j+x,i+y)[0];
                         temp.at<cv::Vec3b>(j+x,i+y)[1] = rImg.at<cv::Vec3b>(j+x,i+y)[1];
                         temp.at<cv::Vec3b>(j+x,i+y)[2] = rImg.at<cv::Vec3b>(j+x,i+y)[2];
-//                        temp.at<cv::Vec3b>(j+x,i+y)[0] = 0;
-//                        temp.at<cv::Vec3b>(j+x,i+y)[1] = 0;
-//                        temp.at<cv::Vec3b>(j+x,i+y)[2] = 0;
                     }
                 }
             }
@@ -953,12 +950,152 @@ void MainWindow::on_ShowButton_clicked()
 
 }
 
-void MainWindow::on_TempDataButtom_clicked()
-{
 
-}
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_CalibrationButton_clicked()
 {
+   qDebug()<<"========";
+   cv::Point2f srcTri[3];
+   cv::Point2f dstTri[3];
+   std::vector<cv::Mat> src;
+   std::vector<cv::Mat> warp_dst;
+   cv::Mat warp_mat;
+   qDebug()<<"0000";
+   src.push_back(nodilate_warp[0]);
+   src.push_back(nodilate_warp[1]);
+   src.push_back(nodilate_warp[2]);
+   src.push_back(nodilate_warp[3]);
+    qDebug()<<"0001";
+   for(int i=0;i<4;i++)
+   {
+       cv::Mat temp =cv::Mat::zeros(src[i].rows,src[i].cols,src[i].type());
+       warp_dst.push_back(temp);
+   }
+    qDebug()<<"0002";
+
+    srcTri[0]= cv::Point2f(0,0);
+    srcTri[1]= cv::Point2f(src[0].cols,0);
+    srcTri[2]= cv::Point2f(0,src[0].rows-1);
+
+
+   //Find Three Point
+   //  ont two three
+   //  four five six
+   //  seven eight nine
+    cv::Point2f temp[3];
+    for(int i =0;i<3;i++)
+    {
+        temp[i].x =src[0].cols/2;
+        temp[i].y =src[0].rows/2;
+    }
+    qDebug()<<src[0].cols<<src[0].rows;
+
+//    cv::Mat dst,dst_norm,dst_norm_scaled;
+//    cv::cornerHarris(src[0],dst,2,3,0.04,cv::BORDER_DEFAULT);
+//    cv::normalize(dst,dst_norm,0,255,cv::NORM_MINMAX,CV_32FC1);
+//    cv::convertScaleAbs(dst_norm,dst_norm_scaled);
+//    std::vector<cv::Point> harriscorner;
+//    for(int j=0;j<dst_norm.rows;j++)
+//    {
+//        for(int i =0;i<dst_norm.cols;i++)
+//        {
+//            if((int)dst_norm.at<float>(j,i) >200 )
+//            {
+//                //cv::circle(dst_norm_scaled,cv::Point(i,j), 5,  cv::Scalar(0), 2, 8, 0);
+//                harriscorner.push_back(cv::Point2f(i,j));
+//            }
+//        }
+//    }
+
+
+//    for(int n =0;n<harriscorner.size();n++)
+//    {
+//        if(temp[0].x+temp[0].y > harriscorner[n].x+harriscorner[n].y)
+//        {
+//            temp[0] = harriscorner[n];
+//        }
+//        if(temp[1].x<harriscorner[n].x)
+//        {
+//            temp[1] = harriscorner[n];
+//        }
+//        if(temp[2].x>harriscorner[n].x && temp[2].y<harriscorner[n].y)
+//        {
+//            temp[2] = harriscorner[n];
+//        }
+//    }
+    qDebug()<<QTemp1.rows<<QTemp1.cols;
+    for(int i =0;i<src[0].cols;i++)
+    {
+        for(int j=0;j<src[0].rows;j++)
+        {
+            if(i==0 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
+            {
+                temp[0] = cv::Point2f(i,j);
+            }
+            if(i==src[0].cols-1 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
+            {
+                temp[1] = cv::Point2f(i,j);
+            }
+            if(j==src[0].rows-1 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
+            {
+                temp[2] = cv::Point2f(i,j);
+            }
+        }
+    }
+    dstTri[0] = temp[0];
+    dstTri[1] = temp[1];
+    dstTri[2] = temp[2];
+    qDebug()<<dstTri[0].x<<dstTri[0].y;
+    qDebug()<<dstTri[1].x<<dstTri[1].y;
+    qDebug()<<dstTri[2].x<<dstTri[2].y;
+
+    qDebug()<<"0001";
+
+   cv::Mat k = nodilate_warp[0].clone();
+   cv::Mat show;
+   cv::cvtColor(k,show,CV_GRAY2BGR);
+   //cv::circle()
+   cv::circle(show,dstTri[0],2,cv::Scalar(0,0,255),5,8,0);
+   cv::circle(show,dstTri[1],2,cv::Scalar(0,0,255),5,8,0);
+   cv::circle(show,dstTri[2],2,cv::Scalar(0,0,255),5,8,0);
+   cv::imshow("k",show);
+//   cv::waitKey(0);
+//    dstTri[0] = cv::Point2f(5,7);
+//    dstTri[1] = cv::Point2f(10,25);
+//    dstTri[2] = cv::Point2f(105,25);
+    qDebug()<<"002";
+
+    warp_mat = cv::getAffineTransform(srcTri,dstTri);
+
+    qDebug()<<"003";
+//    for(int i=0;i<1;i++)
+//    {
+
+    cv::warpAffine(src[0],warp_dst[0],warp_mat,warp_dst[0].size());
+    cv::imshow("warp_dst["+QString::number(0).toStdString(),warp_dst[0]);
+    cv::waitKey(0);
+
+
+
+
+
+//    }
+//    qDebug()<<"004";
+//   QImage wimg1 = QImage((const unsigned char*)(TWarp[0].data),TWarp[0].cols,TWarp[0].rows,TWarp[0].step,QImage::Format_RGB888);
+//   QImage wimg2 = QImage((const unsigned char*)(TWarp[1].data),TWarp[1].cols,TWarp[1].rows,TWarp[1].step,QImage::Format_RGB888);
+//   QImage wimg3 = QImage((const unsigned char*)(TWarp[2].data),TWarp[2].cols,TWarp[2].rows,TWarp[2].step,QImage::Format_RGB888);
+//   QImage wimg4 = QImage((const unsigned char*)(TWarp[3].data),TWarp[3].cols,TWarp[3].rows,TWarp[3].step,QImage::Format_RGB888);
+//   //imgResult.scaled(ui->labelresult->width(),ui->labelresult->height(),Qt::KeepAspectRatio)
+//   ui->labelwarp1->setPixmap(QPixmap::fromImage(wimg1.scaled(ui->labelwarp1->width(),ui->labelwarp1->height(),Qt::KeepAspectRatio)));
+//   ui->labelwarp1->show();
+
+//   ui->labelwarp2->setPixmap(QPixmap::fromImage(wimg2.scaled(ui->labelwarp2->width(),ui->labelwarp2->height(),Qt::KeepAspectRatio)));
+//   ui->labelwarp2->show();
+
+//   ui->labelwarp3->setPixmap(QPixmap::fromImage(wimg3.scaled(ui->labelwarp3->width(),ui->labelwarp3->height(),Qt::KeepAspectRatio)));
+//   ui->labelwarp3->show();
+
+//   ui->labelwarp4->setPixmap(QPixmap::fromImage(wimg4.scaled(ui->labelwarp4->width(),ui->labelwarp4->height(),Qt::KeepAspectRatio)));
+//   ui->labelwarp4->show();
 
 }

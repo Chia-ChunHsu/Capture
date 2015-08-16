@@ -14,6 +14,7 @@
 #include "stitch.h"
 #include "opencv2/stitching/detail/blenders.hpp"
 #include <QTextCodec>
+#include "opencv2/imgproc/imgproc.hpp"
 
 
 namespace Ui {
@@ -72,9 +73,8 @@ private slots:
 
     void on_ShowButton_clicked();
 
-    void on_TempDataButtom_clicked();
 
-    void on_pushButton_clicked();
+    void on_CalibrationButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -111,6 +111,7 @@ private:
     std::vector<cv::Ptr<cv::detail::Blender>> blender_2;
     std::vector<cv::Mat> dilate_mask;
 
+    std::vector<cv::Mat> nodilate_warp;
 
     std::vector<cv::Point> displace;
 

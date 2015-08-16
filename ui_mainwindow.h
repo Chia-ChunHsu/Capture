@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.0
+** Created by: Qt User Interface Compiler version 5.4.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -65,7 +65,7 @@ public:
     QProgressBar *progressBar_Merge;
     QPushButton *ShowButton;
     QPushButton *TempDataButtom;
-    QPushButton *pushButton;
+    QPushButton *CalibrationButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -205,13 +205,13 @@ public:
         TempDataButtom = new QPushButton(centralWidget);
         TempDataButtom->setObjectName(QStringLiteral("TempDataButtom"));
         TempDataButtom->setGeometry(QRect(750, 570, 121, 41));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(370, 620, 341, 51));
+        CalibrationButton = new QPushButton(centralWidget);
+        CalibrationButton->setObjectName(QStringLiteral("CalibrationButton"));
+        CalibrationButton->setGeometry(QRect(370, 620, 341, 51));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1074, 21));
+        menuBar->setGeometry(QRect(0, 0, 1074, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -258,7 +258,7 @@ public:
         Fake_Buttom->setText(QApplication::translate("MainWindow", "Fake", 0));
         ShowButton->setText(QApplication::translate("MainWindow", "Show", 0));
         TempDataButtom->setText(QApplication::translate("MainWindow", "Load_temp_data", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "Calibration", 0));
+        CalibrationButton->setText(QApplication::translate("MainWindow", "Calibration", 0));
     } // retranslateUi
 
 };

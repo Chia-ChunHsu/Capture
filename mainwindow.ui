@@ -523,7 +523,7 @@
      <string>Load_temp_data</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="CalibrationButton">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -543,7 +543,7 @@
      <x>0</x>
      <y>0</y>
      <width>1074</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

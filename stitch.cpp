@@ -483,7 +483,8 @@ Stitch::Status Stitch::composePanorama2(InputArray images, OutputArray pano, std
 
         // Compensate exposure
         exposure_comp_->apply((int)img_idx, corners[img_idx], img_warped, mask_warped);
-
+        //cv::imshow("img_warped",img_warped);
+        //cv::waitKey(0);
         nodilate_mask.push_back(mask_warped);
         //cv::waitKey(0);
 
