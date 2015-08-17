@@ -76,6 +76,19 @@ private slots:
 
     void on_CalibrationButton_clicked();
 
+    void on_CalButton_clicked();
+
+
+    void on_pushButton_clicked();
+
+    void on_RSlider1_sliderMoved(int position);
+
+    void on_RSlider2_sliderMoved(int position);
+
+    void on_RSlider3_sliderMoved(int position);
+
+    void on_RSlider4_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
 
@@ -87,6 +100,8 @@ private:
     std::vector<cv::Mat> TWarp;  //單個的Warping Img
 
     std::vector<cv::Mat> FWarp;  //單個Fake在合成圖的區域
+
+    std::vector<cv::Mat> FSWarp;
 
     cv::Mat T1;
     cv::Mat T2;

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.0
+** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -66,6 +66,13 @@ public:
     QPushButton *ShowButton;
     QPushButton *TempDataButtom;
     QPushButton *CalibrationButton;
+    QPushButton *CalButton;
+    QPushButton *mergeButton;
+    QPushButton *pushButton;
+    QSlider *RSlider1;
+    QSlider *RSlider2;
+    QSlider *RSlider3;
+    QSlider *RSlider4;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -204,14 +211,43 @@ public:
         ShowButton->setGeometry(QRect(550, 550, 161, 61));
         TempDataButtom = new QPushButton(centralWidget);
         TempDataButtom->setObjectName(QStringLiteral("TempDataButtom"));
-        TempDataButtom->setGeometry(QRect(750, 570, 121, 41));
+        TempDataButtom->setGeometry(QRect(910, 640, 121, 41));
         CalibrationButton = new QPushButton(centralWidget);
         CalibrationButton->setObjectName(QStringLiteral("CalibrationButton"));
-        CalibrationButton->setGeometry(QRect(370, 620, 341, 51));
+        CalibrationButton->setGeometry(QRect(370, 620, 171, 51));
+        CalButton = new QPushButton(centralWidget);
+        CalButton->setObjectName(QStringLiteral("CalButton"));
+        CalButton->setGeometry(QRect(550, 620, 161, 51));
+        mergeButton = new QPushButton(centralWidget);
+        mergeButton->setObjectName(QStringLiteral("mergeButton"));
+        mergeButton->setGeometry(QRect(210, 670, 75, 41));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(20, 460, 151, 23));
+        RSlider1 = new QSlider(centralWidget);
+        RSlider1->setObjectName(QStringLiteral("RSlider1"));
+        RSlider1->setGeometry(QRect(730, 390, 160, 22));
+        RSlider1->setMaximum(255);
+        RSlider1->setOrientation(Qt::Horizontal);
+        RSlider2 = new QSlider(centralWidget);
+        RSlider2->setObjectName(QStringLiteral("RSlider2"));
+        RSlider2->setGeometry(QRect(900, 390, 160, 22));
+        RSlider2->setMaximum(255);
+        RSlider2->setOrientation(Qt::Horizontal);
+        RSlider3 = new QSlider(centralWidget);
+        RSlider3->setObjectName(QStringLiteral("RSlider3"));
+        RSlider3->setGeometry(QRect(730, 520, 161, 22));
+        RSlider3->setMaximum(255);
+        RSlider3->setOrientation(Qt::Horizontal);
+        RSlider4 = new QSlider(centralWidget);
+        RSlider4->setObjectName(QStringLiteral("RSlider4"));
+        RSlider4->setGeometry(QRect(900, 520, 160, 22));
+        RSlider4->setMaximum(255);
+        RSlider4->setOrientation(Qt::Horizontal);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1074, 22));
+        menuBar->setGeometry(QRect(0, 0, 1074, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -259,6 +295,9 @@ public:
         ShowButton->setText(QApplication::translate("MainWindow", "Show", 0));
         TempDataButtom->setText(QApplication::translate("MainWindow", "Load_temp_data", 0));
         CalibrationButton->setText(QApplication::translate("MainWindow", "Calibration", 0));
+        CalButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        mergeButton->setText(QApplication::translate("MainWindow", "Merge3", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Load QTemp", 0));
     } // retranslateUi
 
 };

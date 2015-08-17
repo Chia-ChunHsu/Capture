@@ -85,11 +85,12 @@ public:
     Status estimateTransform(InputArray images, const std::vector<std::vector<Rect> > &rois);
 
     Status composePanorama(OutputArray pano);
-    Status composePanorama2(OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask);
-    Status composePanorama(InputArray images, OutputArray pano);
-    Status composePanorama2(InputArray images, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask);
+    Status composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice);
+    Status composePanorama(InputArray images,OutputArray pano);
+    Status composePanorama2(InputArray images,InputArray otherimages, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice);
+
     Status stitch(InputArray images, OutputArray pano);
-    Status stitch2(InputArray images, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  ,std::vector<cv::Mat> &dilate_mask);
+    Status stitch2(InputArray images, InputArray other,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  ,std::vector<cv::Mat> &dilate_mask,int choice);
     Status stitch(InputArray images, const std::vector<std::vector<Rect> > &rois, OutputArray pano);
 
     std::vector<int> component() const { return indices_; }
@@ -98,6 +99,7 @@ public:
 
 private:
     Stitch() {}
+    Ptr<detail::RotationWarper> w;
 
     Status matchImages();
     void estimateCameraParams();
@@ -124,6 +126,7 @@ private:
     std::vector<detail::ImageFeatures> features_;
     std::vector<detail::MatchesInfo> pairwise_matches_;
     std::vector<cv::Mat> seam_est_imgs_;
+    std::vector<cv::Mat> seam_est_imgs_2;
     std::vector<int> indices_;
     std::vector<detail::CameraParams> cameras_;
     double work_scale_;

@@ -657,7 +657,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
      ui->progressBar_Merge->setValue(5);
      cv::Stitch::Status status;
 
-     status = stitcher.stitch2(vImg, rImg,img_warp,nodilate_warp,dilate_mask);
+     status = stitcher.stitch2(vImg,vImg ,rImg,img_warp,nodilate_warp,dilate_mask,1);
 
      ui->progressBar_Merge->setValue(25);
      qDebug()<<"1";
@@ -675,15 +675,16 @@ void MainWindow::on_Merger_2Buttom_clicked()
          }
          else
          {
-             status = stitcher.stitch2(vImg, rImg,img_warp,nodilate_warp,dilate_mask);
+             status = stitcher.stitch2(vImg, vImg,rImg,img_warp,nodilate_warp,dilate_mask,1);
              qDebug()<<"Stitching fail.";
          }
      }while(cv::Stitch::OK != status);
-
+    qDebug()<<"Size "<<img_warp.size();
 
     cv::Mat resultTemp;
 
     ui->progressBar_Merge->setValue(75);
+
     for(int i = 0;i<img_warp.size();i++)
     {
         resultTemp = cv::Mat(img_warp[i].rows,img_warp[i].cols,CV_8UC3);
@@ -717,6 +718,10 @@ void MainWindow::on_Merger_2Buttom_clicked()
     ui->labelwarp3->clear();
     ui->labelwarp4->clear();
 
+//    for(int i=0;i<TWarp.size();i++)
+//    {
+//        cv::imshow(QString::number(i).toStdString(),TWarp[i]);
+//    }
     ui->progressBar_Merge->setValue(95);
     QImage wimg1 = QImage((const unsigned char*)(TWarp[0].data),TWarp[0].cols,TWarp[0].rows,TWarp[0].step,QImage::Format_RGB888);
     QImage wimg2 = QImage((const unsigned char*)(TWarp[1].data),TWarp[1].cols,TWarp[1].rows,TWarp[1].step,QImage::Format_RGB888);
@@ -837,7 +842,13 @@ void MainWindow::on_Fake_Buttom_clicked()
     std::vector<cv::Mat> fakeresult;
     displace.clear();
     //std::vector<cv::Point> displace;
-    Fake_r(TWarp,fakeresult,displace);
+    std::vector<cv::Mat> TempWarp;
+    TempWarp.push_back(frame1);
+    TempWarp.push_back(frame2);
+    TempWarp.push_back(frame3);
+    TempWarp.push_back(frame4);
+    qDebug()<<"*********************";
+    Fake_r(TempWarp,fakeresult,displace);
 
 
 }
@@ -915,32 +926,38 @@ void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeres
 
 void MainWindow::on_ShowButton_clicked()
 {
+    qDebug()<<"showButtom Clicked";
     cv::Mat temp;
-    qDebug()<<TWarp.size() << displace.size();
+    qDebug()<<FSWarp.size() << displace.size();
     //cv::Mat rImgTemp;
     //cv::cvtColor(rImgTemp,rImg,CV_GRAY2BGR);
     cv::Size size(rImg.cols,rImg.rows);
     temp.create(size,CV_MAKETYPE(temp.type(),3));
     temp = cv::Scalar::all(0);
-    qDebug()<<TWarp[0].cols<<TWarp[0].rows<<rImg.channels()<<temp.channels()<<TWarp[0].channels()<<TWarp[1].channels()<<TWarp[2].channels()<<TWarp[3].channels();
-    for(int number=0;number<TWarp.size();number++)
+    qDebug()<<FWarp[0].cols<<FWarp[0].rows<<rImg.channels()<<temp.channels()<<FWarp[0].channels()<<FWarp[1].channels()<<FWarp[2].channels()<<FWarp[3].channels();
+    qDebug()<<"123123123123";
+//    for(int i=0;i<FWarp.size();i++)
+//    {
+//        cv::imshow(QString::number(i).toStdString(),FWarp[i]);
+//    }
+    for(int number=0;number<FSWarp.size();number++)
     {
         qDebug()<<number;
-        for(int i = 0;i<TWarp[number].cols;i++)
+        for(int i = 0;i<FSWarp[number].cols;i++)
         {
-            for(int j=0;j<TWarp[number].rows;j++)
+            for(int j=0;j<FSWarp[number].rows;j++)
             {
                 //qDebug()<<j<<i;
                 //qDebug()<<"0";
                 int x = displace[number].x;
                 int y = displace[number].y;
-                if((TWarp[number].at<cv::Vec3b>(j,i)[0]+TWarp[number].at<cv::Vec3b>(j,i)[1]+TWarp[number].at<cv::Vec3b>(j,i)[2])/3 <20)
+                if((FSWarp[number].at<cv::Vec3b>(j,i)[0]+FSWarp[number].at<cv::Vec3b>(j,i)[1]+FSWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
                 {
-                    if(j+x<rImg.rows && i+y<rImg.cols)
+                    if(j+y<rImg.rows && i+x<rImg.cols)
                     {
-                        temp.at<cv::Vec3b>(j+x,i+y)[0] = rImg.at<cv::Vec3b>(j+x,i+y)[0];
-                        temp.at<cv::Vec3b>(j+x,i+y)[1] = rImg.at<cv::Vec3b>(j+x,i+y)[1];
-                        temp.at<cv::Vec3b>(j+x,i+y)[2] = rImg.at<cv::Vec3b>(j+x,i+y)[2];
+                        temp.at<cv::Vec3b>(j+y,i+x)[0] = 255;
+                        temp.at<cv::Vec3b>(j+y,i+x)[1] = 255;
+                        temp.at<cv::Vec3b>(j+y,i+x)[2] = 255;
                     }
                 }
             }
@@ -954,148 +971,263 @@ void MainWindow::on_ShowButton_clicked()
 
 void MainWindow::on_CalibrationButton_clicked()
 {
-   qDebug()<<"========";
-   cv::Point2f srcTri[3];
-   cv::Point2f dstTri[3];
-   std::vector<cv::Mat> src;
-   std::vector<cv::Mat> warp_dst;
-   cv::Mat warp_mat;
-   qDebug()<<"0000";
-   src.push_back(nodilate_warp[0]);
-   src.push_back(nodilate_warp[1]);
-   src.push_back(nodilate_warp[2]);
-   src.push_back(nodilate_warp[3]);
-    qDebug()<<"0001";
-   for(int i=0;i<4;i++)
-   {
-       cv::Mat temp =cv::Mat::zeros(src[i].rows,src[i].cols,src[i].type());
-       warp_dst.push_back(temp);
-   }
-    qDebug()<<"0002";
+    qDebug()<<"Start!! ";
+    FWarp.clear();
+    std::vector< cv::Mat > vImg;
+    std::vector< cv::Mat > img_warp;
+    std::vector< cv::Mat > vImg2;
+    std::vector< cv::Mat > img_warp2;
+    //std::vector< cv::Mat > mask_warp;
+    //std::vector<cv::Ptr<cv::detail::Blender>> blender;
 
-    srcTri[0]= cv::Point2f(0,0);
-    srcTri[1]= cv::Point2f(src[0].cols,0);
-    srcTri[2]= cv::Point2f(0,src[0].rows-1);
+    //cv::Mat fakeImg;
+
+    vImg.push_back(frame1);
+    vImg.push_back(frame2);
+    vImg.push_back(frame3);
+    vImg.push_back(frame4);
+
+    vImg2.push_back(QTemp1);
+    vImg2.push_back(QTemp2);
+    vImg2.push_back(QTemp3);
+    vImg2.push_back(QTemp4);
+
+    //std::vector<cv::Mat> nodilate_warp;
 
 
-   //Find Three Point
-   //  ont two three
-   //  four five six
-   //  seven eight nine
-    cv::Point2f temp[3];
-    for(int i =0;i<3;i++)
+    cv::Stitch stitcher = cv::Stitch::createDefault();
+    qDebug()<<"0";
+    ui->progressBar_Merge->setValue(5);
+    cv::Stitch::Status status;
+
+    qDebug()<<"Bomb!";
+    std::vector<cv::Mat> non_warp,dil_mask;
+    status = stitcher.stitch2(vImg, vImg2,rImg,img_warp2,non_warp,dil_mask,2);
+
+    ui->progressBar_Merge->setValue(25);
+    qDebug()<<"1";
+
+    do
     {
-        temp[i].x =src[0].cols/2;
-        temp[i].y =src[0].rows/2;
-    }
-    qDebug()<<src[0].cols<<src[0].rows;
-
-//    cv::Mat dst,dst_norm,dst_norm_scaled;
-//    cv::cornerHarris(src[0],dst,2,3,0.04,cv::BORDER_DEFAULT);
-//    cv::normalize(dst,dst_norm,0,255,cv::NORM_MINMAX,CV_32FC1);
-//    cv::convertScaleAbs(dst_norm,dst_norm_scaled);
-//    std::vector<cv::Point> harriscorner;
-//    for(int j=0;j<dst_norm.rows;j++)
-//    {
-//        for(int i =0;i<dst_norm.cols;i++)
-//        {
-//            if((int)dst_norm.at<float>(j,i) >200 )
-//            {
-//                //cv::circle(dst_norm_scaled,cv::Point(i,j), 5,  cv::Scalar(0), 2, 8, 0);
-//                harriscorner.push_back(cv::Point2f(i,j));
-//            }
-//        }
-//    }
-
-
-//    for(int n =0;n<harriscorner.size();n++)
-//    {
-//        if(temp[0].x+temp[0].y > harriscorner[n].x+harriscorner[n].y)
-//        {
-//            temp[0] = harriscorner[n];
-//        }
-//        if(temp[1].x<harriscorner[n].x)
-//        {
-//            temp[1] = harriscorner[n];
-//        }
-//        if(temp[2].x>harriscorner[n].x && temp[2].y<harriscorner[n].y)
-//        {
-//            temp[2] = harriscorner[n];
-//        }
-//    }
-    qDebug()<<QTemp1.rows<<QTemp1.cols;
-    for(int i =0;i<src[0].cols;i++)
-    {
-        for(int j=0;j<src[0].rows;j++)
+        qDebug()<<"2";
+        if (cv::Stitch::OK == status)
         {
-            if(i==0 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
+            cv::imwrite("result.jpg",rImg);
+            QImage imgResult = QImage((const unsigned char*)(rImg.data),rImg.cols,rImg.rows,rImg.step,QImage::Format_RGB888);
+            ui->labelresult->clear();
+            ui->labelresult->setPixmap(QPixmap::fromImage(imgResult.scaled(ui->labelresult->width(),ui->labelresult->height(),Qt::KeepAspectRatio)));
+            ui->labelresult->show();
+        }
+        else
+        {
+            status = stitcher.stitch2(vImg,vImg2, rImg,img_warp2,non_warp,dil_mask,2);
+            qDebug()<<"Stitching fail.";
+        }
+    }while(cv::Stitch::OK != status);
+   qDebug()<<"Size "<<img_warp2.size();
+//vector<Point> corners(imgs_.size());
+
+
+   qDebug()<<"Bomb!  = = = ";
+   ui->progressBar_Merge->setValue(75);
+   //cv::Mat book;
+
+   qDebug()<<non_warp.size();
+   std::vector<cv::Mat> dil_resizemask(non_warp.size());
+   for(int i=0;i<non_warp.size();i++)
+   {
+        cv::resize(non_warp[i],dil_resizemask[i],cv::Size(img_warp2[i].cols,img_warp2[i].rows));
+        //cv::imshow(QString::number(i).toStdString(),img_warp2[i]);
+   }
+   ui->progressBar_Merge->setValue(80);
+
+   cv::Mat resultTemp;
+   for(int i = 0;i<img_warp2.size();i++)
+   {
+       resultTemp = cv::Mat(img_warp2[i].rows,img_warp2[i].cols,CV_8UC3);
+       for(int b = 0 ; b<img_warp2[i].rows;b++)
+       {
+           for(int a = 0; a<img_warp2[i].cols;a++)
+           {
+               //qDebug()<<mask_warp[i].at<uchar>(b,a);
+               if(dil_resizemask[i].at<uchar>(b,a) == 255)
+               {
+                   resultTemp.at<cv::Vec3b>(b, a)[0] = img_warp2[i].at<cv::Vec3b>(b,a)[0];
+                   resultTemp.at<cv::Vec3b>(b, a)[1] = img_warp2[i].at<cv::Vec3b>(b,a)[1];
+                   resultTemp.at<cv::Vec3b>(b, a)[2] = img_warp2[i].at<cv::Vec3b>(b,a)[2];
+
+               }
+               else
+               {
+                   resultTemp.at<cv::Vec3b>(b, a)[0] = 0;
+                   resultTemp.at<cv::Vec3b>(b, a)[1] = 0;
+                   resultTemp.at<cv::Vec3b>(b, a)[2] = 0;
+               }
+               //qDebug()<<i;
+           }
+       }
+      // cv::imshow(QString::number(i).toStdString()+"result",resultTemp);
+       FWarp.push_back(resultTemp);
+       FSWarp.push_back(resultTemp);
+       //cv::waitKey(0);
+   }
+   ui->labelaffect1->clear();
+   ui->labelaffect2->clear();
+   ui->labelaffect3->clear();
+   ui->labelaffect4->clear();
+   QImage qimage1=QImage((const unsigned char*)FWarp[0].data,FWarp[0].cols,FWarp[0].rows,FWarp[0].step,QImage::Format_RGB888);
+   QImage qimage2=QImage((const unsigned char*)FWarp[1].data,FWarp[1].cols,FWarp[1].rows,FWarp[1].step,QImage::Format_RGB888);
+   QImage qimage3=QImage((const unsigned char*)FWarp[2].data,FWarp[2].cols,FWarp[2].rows,FWarp[2].step,QImage::Format_RGB888);
+   QImage qimage4=QImage((const unsigned char*)FWarp[3].data,FWarp[3].cols,FWarp[3].rows,FWarp[3].step,QImage::Format_RGB888);
+   ui->labelaffect1->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect1->width(),ui->labelaffect1->height(),Qt::KeepAspectRatio)));
+   ui->labelaffect2->setPixmap(QPixmap::fromImage(qimage2.scaled(ui->labelaffect2->width(),ui->labelaffect2->height(),Qt::KeepAspectRatio)));
+   ui->labelaffect3->setPixmap(QPixmap::fromImage(qimage3.scaled(ui->labelaffect3->width(),ui->labelaffect3->height(),Qt::KeepAspectRatio)));
+   ui->labelaffect4->setPixmap(QPixmap::fromImage(qimage4.scaled(ui->labelaffect4->width(),ui->labelaffect4->height(),Qt::KeepAspectRatio)));
+   ui->labelaffect1->show();
+   ui->labelaffect2->show();
+   ui->labelaffect3->show();
+   ui->labelaffect4->show();
+   ui->progressBar_Merge->setValue(100);
+
+}
+
+void MainWindow::on_CalButton_clicked()
+{
+    std::vector<cv::Mat> src;
+    src.push_back(nodilate_warp[0]);
+    src.push_back(nodilate_warp[1]);
+    src.push_back(nodilate_warp[2]);
+    src.push_back(nodilate_warp[3]);
+    cv::imshow("Outpu",src[0]);
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    std::string img1Name("frame10.jpg");
+    QTemp1 = cv::imread(img1Name.c_str(),cv::IMREAD_COLOR);
+    std::string img2Name("frame20.jpg");
+    QTemp2 = cv::imread(img2Name.c_str(),cv::IMREAD_COLOR);
+    std::string img3Name("frame30.jpg");
+    QTemp3 = cv::imread(img3Name.c_str(),cv::IMREAD_COLOR);
+    std::string img4Name("frame40.jpg");
+    QTemp4 = cv::imread(img4Name.c_str(),cv::IMREAD_COLOR);
+
+}
+
+void MainWindow::on_RSlider1_sliderMoved(int position)
+{
+    FSWarp[0] = FWarp[0].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[0].cols;i++)
+    {
+        for(int j=0;j<FWarp[0].rows;j++)
+        {
+            double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
+            if(pix<position)
             {
-                temp[0] = cv::Point2f(i,j);
+                FSWarp[0].at<cv::Vec3b>(j,i)[0] = 0;
+                FSWarp[0].at<cv::Vec3b>(j,i)[1] = 0;
+                FSWarp[0].at<cv::Vec3b>(j,i)[2] = 0;
             }
-            if(i==src[0].cols-1 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
+            else
             {
-                temp[1] = cv::Point2f(i,j);
-            }
-            if(j==src[0].rows-1 && src[0].at<cv::Vec3b>(j,i)[0]==255&& src[0].at<cv::Vec3b>(j,i)[1]==255&& src[0].at<cv::Vec3b>(j,i)[2]==255)
-            {
-                temp[2] = cv::Point2f(i,j);
+                FSWarp[0].at<cv::Vec3b>(j,i)[0] = 255;
+                FSWarp[0].at<cv::Vec3b>(j,i)[1] = 255;
+                FSWarp[0].at<cv::Vec3b>(j,i)[2] = 255;
             }
         }
     }
-    dstTri[0] = temp[0];
-    dstTri[1] = temp[1];
-    dstTri[2] = temp[2];
-    qDebug()<<dstTri[0].x<<dstTri[0].y;
-    qDebug()<<dstTri[1].x<<dstTri[1].y;
-    qDebug()<<dstTri[2].x<<dstTri[2].y;
-
-    qDebug()<<"0001";
-
-   cv::Mat k = nodilate_warp[0].clone();
-   cv::Mat show;
-   cv::cvtColor(k,show,CV_GRAY2BGR);
-   //cv::circle()
-   cv::circle(show,dstTri[0],2,cv::Scalar(0,0,255),5,8,0);
-   cv::circle(show,dstTri[1],2,cv::Scalar(0,0,255),5,8,0);
-   cv::circle(show,dstTri[2],2,cv::Scalar(0,0,255),5,8,0);
-   cv::imshow("k",show);
-//   cv::waitKey(0);
-//    dstTri[0] = cv::Point2f(5,7);
-//    dstTri[1] = cv::Point2f(10,25);
-//    dstTri[2] = cv::Point2f(105,25);
-    qDebug()<<"002";
-
-    warp_mat = cv::getAffineTransform(srcTri,dstTri);
-
-    qDebug()<<"003";
-//    for(int i=0;i<1;i++)
-//    {
-
-    cv::warpAffine(src[0],warp_dst[0],warp_mat,warp_dst[0].size());
-    cv::imshow("warp_dst["+QString::number(0).toStdString(),warp_dst[0]);
-    cv::waitKey(0);
+    QImage qimage1=QImage((const unsigned char*)FSWarp[0].data,FSWarp[0].cols,FSWarp[0].rows,FSWarp[0].step,QImage::Format_RGB888);
+    ui->labelaffect1->clear();
+    ui->labelaffect1->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect1->width(),ui->labelaffect1->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect1->show();
+}
 
 
+void MainWindow::on_RSlider2_sliderMoved(int position)
+{
+    FSWarp[1] = FWarp[1].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[1].cols;i++)
+    {
+        for(int j=0;j<FWarp[1].rows;j++)
+        {
+            double pix =(FWarp[1].at<cv::Vec3b>(j, i)[0]+FWarp[1].at<cv::Vec3b>(j, i)[1]+FWarp[1].at<cv::Vec3b>(j, i)[2])/3;
+            if(pix<position)
+            {
+                FSWarp[1].at<cv::Vec3b>(j,i)[0] = 0;
+                FSWarp[1].at<cv::Vec3b>(j,i)[1] = 0;
+                FSWarp[1].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSWarp[1].at<cv::Vec3b>(j,i)[0] = 255;
+                FSWarp[1].at<cv::Vec3b>(j,i)[1] = 255;
+                FSWarp[1].at<cv::Vec3b>(j,i)[2] = 255;
+            }
+        }
+    }
+    QImage qimage1=QImage((const unsigned char*)FSWarp[1].data,FSWarp[1].cols,FSWarp[1].rows,FSWarp[1].step,QImage::Format_RGB888);
+    ui->labelaffect2->clear();
+    ui->labelaffect2->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect2->width(),ui->labelaffect2->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect2->show();
+}
 
+void MainWindow::on_RSlider3_sliderMoved(int position)
+{
+    FSWarp[2] = FWarp[2].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[2].cols;i++)
+    {
+        for(int j=0;j<FWarp[2].rows;j++)
+        {
+            double pix =(FWarp[2].at<cv::Vec3b>(j, i)[0]+FWarp[2].at<cv::Vec3b>(j, i)[1]+FWarp[2].at<cv::Vec3b>(j, i)[2])/3;
+            if(pix<position)
+            {
+                FSWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
+                FSWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
+                FSWarp[2].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSWarp[2].at<cv::Vec3b>(j,i)[0] = 255;
+                FSWarp[2].at<cv::Vec3b>(j,i)[1] = 255;
+                FSWarp[2].at<cv::Vec3b>(j,i)[2] = 255;
+            }
+        }
+    }
+    QImage qimage1=QImage((const unsigned char*)FSWarp[2].data,FSWarp[2].cols,FSWarp[2].rows,FSWarp[2].step,QImage::Format_RGB888);
+    ui->labelaffect3->clear();
+    ui->labelaffect3->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect3->width(),ui->labelaffect3->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect3->show();
+}
 
-
-//    }
-//    qDebug()<<"004";
-//   QImage wimg1 = QImage((const unsigned char*)(TWarp[0].data),TWarp[0].cols,TWarp[0].rows,TWarp[0].step,QImage::Format_RGB888);
-//   QImage wimg2 = QImage((const unsigned char*)(TWarp[1].data),TWarp[1].cols,TWarp[1].rows,TWarp[1].step,QImage::Format_RGB888);
-//   QImage wimg3 = QImage((const unsigned char*)(TWarp[2].data),TWarp[2].cols,TWarp[2].rows,TWarp[2].step,QImage::Format_RGB888);
-//   QImage wimg4 = QImage((const unsigned char*)(TWarp[3].data),TWarp[3].cols,TWarp[3].rows,TWarp[3].step,QImage::Format_RGB888);
-//   //imgResult.scaled(ui->labelresult->width(),ui->labelresult->height(),Qt::KeepAspectRatio)
-//   ui->labelwarp1->setPixmap(QPixmap::fromImage(wimg1.scaled(ui->labelwarp1->width(),ui->labelwarp1->height(),Qt::KeepAspectRatio)));
-//   ui->labelwarp1->show();
-
-//   ui->labelwarp2->setPixmap(QPixmap::fromImage(wimg2.scaled(ui->labelwarp2->width(),ui->labelwarp2->height(),Qt::KeepAspectRatio)));
-//   ui->labelwarp2->show();
-
-//   ui->labelwarp3->setPixmap(QPixmap::fromImage(wimg3.scaled(ui->labelwarp3->width(),ui->labelwarp3->height(),Qt::KeepAspectRatio)));
-//   ui->labelwarp3->show();
-
-//   ui->labelwarp4->setPixmap(QPixmap::fromImage(wimg4.scaled(ui->labelwarp4->width(),ui->labelwarp4->height(),Qt::KeepAspectRatio)));
-//   ui->labelwarp4->show();
-
+void MainWindow::on_RSlider4_sliderMoved(int position)
+{
+    FSWarp[3] = FWarp[3].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[3].cols;i++)
+    {
+        for(int j=0;j<FWarp[3].rows;j++)
+        {
+            double pix =(FWarp[3].at<cv::Vec3b>(j, i)[0]+FWarp[3].at<cv::Vec3b>(j, i)[1]+FWarp[3].at<cv::Vec3b>(j, i)[2])/3;
+            if(pix<position)
+            {
+                FSWarp[3].at<cv::Vec3b>(j,i)[0] = 0;
+                FSWarp[3].at<cv::Vec3b>(j,i)[1] = 0;
+                FSWarp[3].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSWarp[3].at<cv::Vec3b>(j,i)[0] = 255;
+                FSWarp[3].at<cv::Vec3b>(j,i)[1] = 255;
+                FSWarp[3].at<cv::Vec3b>(j,i)[2] = 255;
+            }
+        }
+    }
+    QImage qimage1=QImage((const unsigned char*)FSWarp[3].data,FSWarp[3].cols,FSWarp[3].rows,FSWarp[3].step,QImage::Format_RGB888);
+    ui->labelaffect4->clear();
+    ui->labelaffect4->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect4->width(),ui->labelaffect4->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect4->show();
 }
