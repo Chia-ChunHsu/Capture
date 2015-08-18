@@ -16,17 +16,51 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_StartButton_clicked()
 {
-    cv::VideoCapture cap1(1);
-    cv::VideoCapture cap2(2);
+    //The Information of the QCameraInfo : http://doc.qt.io/qt-5/qcamerainfo.html
+    //fit the correct Camera
+    int DeviceID[4]={-1,-1,-1,-1};
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    int size = 0;
+    QString VideoName0 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&cb29abf&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
+    QString VideoName1 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&3225fc09&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
+    QString VideoName2 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&60715e6&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
+    QString VideoName3 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&2b7a7730&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
 
-    //    cv::Mat frame1;
-    //    cv::Mat frame2;
-    //    cv::Mat frame3;
-    //    cv::Mat frame4;
+    foreach (const QCameraInfo &cameraInfo, cameras) {
+        qDebug()<<cameraInfo.deviceName();
+        if(cameraInfo.deviceName() == VideoName0)
+        {
+            DeviceID[0] = size;
+        }
+        else if(cameraInfo.deviceName() == VideoName1)
+        {
+            DeviceID[1] = size;
+        }
+        else if(cameraInfo.deviceName() == VideoName2)
+        {
+            DeviceID[2] = size;
+        }
+        else if(cameraInfo.deviceName() == VideoName3)
+        {
+            DeviceID[3] = size;
+        }
+        size++;
+    }
+    qDebug()<<size;
+
+
+
+    //const std::string video0 = "USB\VID_05AC&PID_8507\6&29250CCB&0&4";
+
+    qDebug()<<DeviceID[0];
+    qDebug()<<DeviceID[1];
+
+    cv::VideoCapture cap1(DeviceID[0]);
+    cv::VideoCapture cap2(DeviceID[1]);
+
     if(!cap1.isOpened() || !cap2.isOpened())
         return;
-    //    if(!cap1.isOpened() || !cap2.isOpened() || !cap3.isOpened() || !cap4.isOpened())
-    //        return;
+
     for(int i = 0; i< 100;i++)
     {
         cap1>>frame1;
@@ -39,8 +73,8 @@ void MainWindow::on_StartButton_clicked()
     //    cv::imshow("1",frame1);
     //    cv::imshow("2",frame2);
 
-    cv::VideoCapture cap3(3);
-    cv::VideoCapture cap4(0);
+    cv::VideoCapture cap3(DeviceID[2]);
+    cv::VideoCapture cap4(DeviceID[3]);
     if(!cap3.isOpened() || !cap4.isOpened())
         return;
     for(int i = 0; i< 100;i++)
@@ -51,8 +85,6 @@ void MainWindow::on_StartButton_clicked()
     }
     cap3.release();
     cap4.release();
-    //    cv::imshow("3",frame3);
-    //    cv::imshow("4",frame4);
 
     QTemp1 = frame1.clone();
     QTemp2 = frame2.clone();
@@ -67,7 +99,7 @@ void MainWindow::on_StartButton_clicked()
 
     ui->label1->clear();
     ui->label1->setPixmap(QPixmap::fromImage(img1.scaled(ui->label1->width(),ui->label1->height(),Qt::KeepAspectRatio)));
-    //ui->label1->resize(ui->label1->pixmap()->size());
+    ui->label1->resize(ui->label1->pixmap()->size());
     ui->label2->clear();
     ui->label2->setPixmap(QPixmap::fromImage(img2.scaled(ui->label2->width(),ui->label2->height(),Qt::KeepAspectRatio)));
     ui->label3->clear();
@@ -1124,17 +1156,35 @@ void MainWindow::on_RSlider1_sliderMoved(int position)
         for(int j=0;j<FWarp[0].rows;j++)
         {
             double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
-            if(pix<position)
+            if(ui->checkBox1->isChecked())
             {
-                FSWarp[0].at<cv::Vec3b>(j,i)[0] = 0;
-                FSWarp[0].at<cv::Vec3b>(j,i)[1] = 0;
-                FSWarp[0].at<cv::Vec3b>(j,i)[2] = 0;
+                if(pix<position)
+                {
+                    FSWarp[0].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[0].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
             else
             {
-                FSWarp[0].at<cv::Vec3b>(j,i)[0] = 255;
-                FSWarp[0].at<cv::Vec3b>(j,i)[1] = 255;
-                FSWarp[0].at<cv::Vec3b>(j,i)[2] = 255;
+                if(pix>position)
+                {
+                    FSWarp[0].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[0].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[0].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
         }
     }
@@ -1154,17 +1204,35 @@ void MainWindow::on_RSlider2_sliderMoved(int position)
         for(int j=0;j<FWarp[1].rows;j++)
         {
             double pix =(FWarp[1].at<cv::Vec3b>(j, i)[0]+FWarp[1].at<cv::Vec3b>(j, i)[1]+FWarp[1].at<cv::Vec3b>(j, i)[2])/3;
-            if(pix<position)
+            if(ui->checkBox2->isChecked())
             {
-                FSWarp[1].at<cv::Vec3b>(j,i)[0] = 0;
-                FSWarp[1].at<cv::Vec3b>(j,i)[1] = 0;
-                FSWarp[1].at<cv::Vec3b>(j,i)[2] = 0;
+                if(pix<position)
+                {
+                    FSWarp[1].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[1].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
             else
             {
-                FSWarp[1].at<cv::Vec3b>(j,i)[0] = 255;
-                FSWarp[1].at<cv::Vec3b>(j,i)[1] = 255;
-                FSWarp[1].at<cv::Vec3b>(j,i)[2] = 255;
+                if(pix>position)
+                {
+                    FSWarp[1].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[1].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[1].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
         }
     }
@@ -1183,18 +1251,37 @@ void MainWindow::on_RSlider3_sliderMoved(int position)
         for(int j=0;j<FWarp[2].rows;j++)
         {
             double pix =(FWarp[2].at<cv::Vec3b>(j, i)[0]+FWarp[2].at<cv::Vec3b>(j, i)[1]+FWarp[2].at<cv::Vec3b>(j, i)[2])/3;
-            if(pix<position)
+            if(ui->checkBox3->isChecked())
             {
-                FSWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
-                FSWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
-                FSWarp[2].at<cv::Vec3b>(j,i)[2] = 0;
+                if(pix<position)
+                {
+                    FSWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[2].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
             else
             {
-                FSWarp[2].at<cv::Vec3b>(j,i)[0] = 255;
-                FSWarp[2].at<cv::Vec3b>(j,i)[1] = 255;
-                FSWarp[2].at<cv::Vec3b>(j,i)[2] = 255;
+                if(pix>position)
+                {
+                    FSWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[2].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[2].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
+
         }
     }
     QImage qimage1=QImage((const unsigned char*)FSWarp[2].data,FSWarp[2].cols,FSWarp[2].rows,FSWarp[2].step,QImage::Format_RGB888);
@@ -1212,17 +1299,35 @@ void MainWindow::on_RSlider4_sliderMoved(int position)
         for(int j=0;j<FWarp[3].rows;j++)
         {
             double pix =(FWarp[3].at<cv::Vec3b>(j, i)[0]+FWarp[3].at<cv::Vec3b>(j, i)[1]+FWarp[3].at<cv::Vec3b>(j, i)[2])/3;
-            if(pix<position)
+            if(ui->checkBox4->isChecked())
             {
-                FSWarp[3].at<cv::Vec3b>(j,i)[0] = 0;
-                FSWarp[3].at<cv::Vec3b>(j,i)[1] = 0;
-                FSWarp[3].at<cv::Vec3b>(j,i)[2] = 0;
+                if(pix<position)
+                {
+                    FSWarp[3].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[3].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
             else
             {
-                FSWarp[3].at<cv::Vec3b>(j,i)[0] = 255;
-                FSWarp[3].at<cv::Vec3b>(j,i)[1] = 255;
-                FSWarp[3].at<cv::Vec3b>(j,i)[2] = 255;
+                if(pix>position)
+                {
+                    FSWarp[3].at<cv::Vec3b>(j,i)[0] = 0;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[1] = 0;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[2] = 0;
+                }
+                else
+                {
+                    FSWarp[3].at<cv::Vec3b>(j,i)[0] = 255;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[1] = 255;
+                    FSWarp[3].at<cv::Vec3b>(j,i)[2] = 255;
+                }
             }
         }
     }

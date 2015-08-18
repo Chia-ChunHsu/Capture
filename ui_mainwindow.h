@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
@@ -73,6 +74,10 @@ public:
     QSlider *RSlider2;
     QSlider *RSlider3;
     QSlider *RSlider4;
+    QCheckBox *checkBox1;
+    QCheckBox *checkBox2;
+    QCheckBox *checkBox3;
+    QCheckBox *checkBox4;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -244,6 +249,18 @@ public:
         RSlider4->setGeometry(QRect(900, 520, 160, 22));
         RSlider4->setMaximum(255);
         RSlider4->setOrientation(Qt::Horizontal);
+        checkBox1 = new QCheckBox(centralWidget);
+        checkBox1->setObjectName(QStringLiteral("checkBox1"));
+        checkBox1->setGeometry(QRect(730, 260, 73, 16));
+        checkBox2 = new QCheckBox(centralWidget);
+        checkBox2->setObjectName(QStringLiteral("checkBox2"));
+        checkBox2->setGeometry(QRect(900, 260, 73, 16));
+        checkBox3 = new QCheckBox(centralWidget);
+        checkBox3->setObjectName(QStringLiteral("checkBox3"));
+        checkBox3->setGeometry(QRect(730, 540, 73, 16));
+        checkBox4 = new QCheckBox(centralWidget);
+        checkBox4->setObjectName(QStringLiteral("checkBox4"));
+        checkBox4->setGeometry(QRect(900, 540, 73, 16));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -298,6 +315,10 @@ public:
         CalButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
         mergeButton->setText(QApplication::translate("MainWindow", "Merge3", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Load QTemp", 0));
+        checkBox1->setText(QApplication::translate("MainWindow", "CheckBox", 0));
+        checkBox2->setText(QApplication::translate("MainWindow", "CheckBox", 0));
+        checkBox3->setText(QApplication::translate("MainWindow", "CheckBox", 0));
+        checkBox4->setText(QApplication::translate("MainWindow", "CheckBox", 0));
     } // retranslateUi
 
 };

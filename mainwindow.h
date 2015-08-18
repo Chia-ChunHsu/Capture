@@ -15,6 +15,8 @@
 #include "opencv2/stitching/detail/blenders.hpp"
 #include <QTextCodec>
 #include "opencv2/imgproc/imgproc.hpp"
+#include <Qlist>
+#include <QCameraInfo>
 
 
 namespace Ui {
