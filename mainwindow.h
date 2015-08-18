@@ -91,6 +91,10 @@ private slots:
 
     void on_RSlider4_sliderMoved(int position);
 
+    void on_Filter1_sliderMoved(int position);
+
+    void on_Filter3_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
 
@@ -104,6 +108,8 @@ private:
     std::vector<cv::Mat> FWarp;  //單個Fake在合成圖的區域
 
     std::vector<cv::Mat> FSWarp;
+
+    std::vector<cv::Mat> FSCWarp;
 
     cv::Mat T1;
     cv::Mat T2;

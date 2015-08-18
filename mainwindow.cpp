@@ -25,6 +25,7 @@ void MainWindow::on_StartButton_clicked()
     QString VideoName1 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&3225fc09&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     QString VideoName2 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&60715e6&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     QString VideoName3 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&2b7a7730&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
+    //QString VideoName3 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&2b7a7730&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global
 
     foreach (const QCameraInfo &cameraInfo, cameras) {
         qDebug()<<cameraInfo.deviceName();
@@ -54,12 +55,23 @@ void MainWindow::on_StartButton_clicked()
 
     qDebug()<<DeviceID[0];
     qDebug()<<DeviceID[1];
+    qDebug()<<DeviceID[2];
+    qDebug()<<DeviceID[3];
 
     cv::VideoCapture cap1(DeviceID[0]);
     cv::VideoCapture cap2(DeviceID[1]);
 
+    cap1.set(CV_CAP_PROP_BRIGHTNESS,160);
+    cap2.set(CV_CAP_PROP_BRIGHTNESS,160);
+    cap1.set(CV_CAP_PROP_CONTRAST,165);
+    cap2.set(CV_CAP_PROP_CONTRAST,165);
+    cap1.set(CV_CAP_PROP_SATURATION,125);
+    cap2.set(CV_CAP_PROP_SATURATION,125);
+
+
     if(!cap1.isOpened() || !cap2.isOpened())
         return;
+
 
     for(int i = 0; i< 100;i++)
     {
@@ -75,6 +87,15 @@ void MainWindow::on_StartButton_clicked()
 
     cv::VideoCapture cap3(DeviceID[2]);
     cv::VideoCapture cap4(DeviceID[3]);
+
+    cap3.set(CV_CAP_PROP_BRIGHTNESS,160);
+    cap4.set(CV_CAP_PROP_BRIGHTNESS,160);
+    cap3.set(CV_CAP_PROP_CONTRAST,165);
+    cap4.set(CV_CAP_PROP_CONTRAST,165);
+    cap3.set(CV_CAP_PROP_SATURATION,125);
+    cap4.set(CV_CAP_PROP_SATURATION,125);
+
+
     if(!cap3.isOpened() || !cap4.isOpened())
         return;
     for(int i = 0; i< 100;i++)
@@ -85,6 +106,7 @@ void MainWindow::on_StartButton_clicked()
     }
     cap3.release();
     cap4.release();
+
 
     QTemp1 = frame1.clone();
     QTemp2 = frame2.clone();
@@ -985,11 +1007,11 @@ void MainWindow::on_ShowButton_clicked()
                 int y = displace[number].y;
                 if((FSWarp[number].at<cv::Vec3b>(j,i)[0]+FSWarp[number].at<cv::Vec3b>(j,i)[1]+FSWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
                 {
-                    if(j+y<rImg.rows && i+x<rImg.cols)
+                    if(j+x<rImg.rows && i+y<rImg.cols && j+x>=0 && i+y>=0)
                     {
-                        temp.at<cv::Vec3b>(j+y,i+x)[0] = 255;
-                        temp.at<cv::Vec3b>(j+y,i+x)[1] = 255;
-                        temp.at<cv::Vec3b>(j+y,i+x)[2] = 255;
+                        temp.at<cv::Vec3b>(j+x,i+y)[0] = 255;
+                        temp.at<cv::Vec3b>(j+x,i+y)[1] = 255;
+                        temp.at<cv::Vec3b>(j+x,i+y)[2] = 255;
                     }
                 }
             }
@@ -1101,6 +1123,7 @@ void MainWindow::on_CalibrationButton_clicked()
       // cv::imshow(QString::number(i).toStdString()+"result",resultTemp);
        FWarp.push_back(resultTemp);
        FSWarp.push_back(resultTemp);
+       FSCWarp.push_back(resultTemp);
        //cv::waitKey(0);
    }
    ui->labelaffect1->clear();
@@ -1335,4 +1358,66 @@ void MainWindow::on_RSlider4_sliderMoved(int position)
     ui->labelaffect4->clear();
     ui->labelaffect4->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect4->width(),ui->labelaffect4->height(),Qt::KeepAspectRatio)));
     ui->labelaffect4->show();
+}
+
+void MainWindow::on_Filter1_sliderMoved(int position)
+{
+    //FSWarp[0] = FWarp[0].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[0].cols;i++)
+    {
+        for(int j=0;j<FWarp[0].rows;j++)
+        {
+            //double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
+
+            if(pow(pow(i-FSWarp[0].cols/2,2)+pow(j-FSWarp[0].rows/2,2),0.5)>FSWarp[0].rows/100*position)
+            {
+                FSCWarp[0].at<cv::Vec3b>(j,i)[0] = 0;
+                FSCWarp[0].at<cv::Vec3b>(j,i)[1] = 0;
+                FSCWarp[0].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSCWarp[0].at<cv::Vec3b>(j,i)[0] = FSWarp[0].at<cv::Vec3b>(j,i)[0];
+                FSCWarp[0].at<cv::Vec3b>(j,i)[1] = FSWarp[0].at<cv::Vec3b>(j,i)[1];
+                FSCWarp[0].at<cv::Vec3b>(j,i)[2] = FSWarp[0].at<cv::Vec3b>(j,i)[2];
+            }
+
+
+        }
+    }
+    QImage qimage1=QImage((const unsigned char*)FSCWarp[0].data,FSCWarp[0].cols,FSCWarp[0].rows,FSCWarp[0].step,QImage::Format_RGB888);
+    ui->labelaffect1->clear();
+    ui->labelaffect1->setPixmap(QPixmap::fromImage(qimage1.scaled(ui->labelaffect1->width(),ui->labelaffect1->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect1->show();
+}
+
+void MainWindow::on_Filter3_sliderMoved(int position)
+{
+    //FSWarp[3] = FWarp[3].clone();
+    //QTemp1 = frame1.clone();
+    for(int i = 0;i<FWarp[2].cols;i++)
+    {
+        for(int j=0;j<FWarp[2].rows;j++)
+        {
+            //double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
+
+            if(pow(pow(i-FSWarp[2].cols/2,2)+pow(j-FSWarp[3].rows/2,2),0.5)>FSWarp[3].rows/100*position)
+            {
+                FSCWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
+                FSCWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
+                FSCWarp[2].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSCWarp[2].at<cv::Vec3b>(j,i)[0] = FSWarp[2].at<cv::Vec3b>(j,i)[0];
+                FSCWarp[2].at<cv::Vec3b>(j,i)[1] = FSWarp[2].at<cv::Vec3b>(j,i)[1];
+                FSCWarp[2].at<cv::Vec3b>(j,i)[2] = FSWarp[2].at<cv::Vec3b>(j,i)[2];
+            }
+        }
+    }
+    QImage qimage2=QImage((const unsigned char*)FSCWarp[2].data,FSCWarp[2].cols,FSCWarp[2].rows,FSCWarp[2].step,QImage::Format_RGB888);
+    ui->labelaffect3->clear();
+    ui->labelaffect3->setPixmap(QPixmap::fromImage(qimage2.scaled(ui->labelaffect3->width(),ui->labelaffect3->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect3->show();
 }
