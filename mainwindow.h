@@ -113,6 +113,8 @@ private:
 
     std::vector<cv::Mat> FSCWarp;
 
+    std::vector<cv::Point> ConrnerPoint;
+
     cv::Mat T1;
     cv::Mat T2;
     cv::Mat T3;

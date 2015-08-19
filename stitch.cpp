@@ -74,10 +74,10 @@ Stitch::Status Stitch::composePanorama(OutputArray pano)
 }
 
 
-Stitch::Status Stitch::composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice)
+Stitch::Status Stitch::composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,vector<Point> corners)
 {
     qDebug()<<"000";
-    return composePanorama2(vector<Mat>(),otherimages, pano,img_warp,nodilate_mask,dilate_mask,choice);
+    return composePanorama2(vector<Mat>(),otherimages, pano,img_warp,nodilate_mask,dilate_mask,choice,corners);
 }
 
 
@@ -305,7 +305,7 @@ Stitch::Status Stitch::composePanorama(InputArray images, OutputArray pano )
 
     return OK;
 }
-Stitch::Status Stitch::composePanorama2(InputArray images,InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice)
+Stitch::Status Stitch::composePanorama2(InputArray images,InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,vector<Point> corners)
 {
     if(choice == 1)
     {
@@ -347,7 +347,7 @@ Stitch::Status Stitch::composePanorama2(InputArray images,InputArray otherimages
         int64 t = getTickCount();
     #endif
         qDebug()<<"003";
-        vector<Point> corners(imgs_.size());
+        //vector<Point> corners(imgs_.size());
         vector<Mat> masks_warped(imgs_.size());
         vector<Mat> images_warped(imgs_.size());
         vector<Size> sizes(imgs_.size());
@@ -788,14 +788,14 @@ Stitch::Status Stitch::stitch(InputArray images, OutputArray pano)
     return composePanorama(pano);
 }
 
-Stitch::Status Stitch::stitch2(InputArray images, InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp, std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice)
+Stitch::Status Stitch::stitch2(InputArray images, InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp, std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,vector<Point> corners)
 {
     qDebug()<<"0-0";
     Status status = estimateTransform(images);
     qDebug()<<"-00";
     if (status != OK)
         return status;
-    return composePanorama2(otherimages,pano,img_warp, nodilate_mask,dilate_mask,choice);
+    return composePanorama2(otherimages,pano,img_warp, nodilate_mask,dilate_mask,choice,corners);
 }
 
 

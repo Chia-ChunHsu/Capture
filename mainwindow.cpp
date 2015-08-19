@@ -711,7 +711,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
      ui->progressBar_Merge->setValue(5);
      cv::Stitch::Status status;
 
-     status = stitcher.stitch2(vImg,vImg ,rImg,img_warp,nodilate_warp,dilate_mask,1);
+     status = stitcher.stitch2(vImg,vImg ,rImg,img_warp,nodilate_warp,dilate_mask,1,ConrnerPoint);
 
      ui->progressBar_Merge->setValue(25);
      qDebug()<<"1";
@@ -729,7 +729,7 @@ void MainWindow::on_Merger_2Buttom_clicked()
          }
          else
          {
-             status = stitcher.stitch2(vImg, vImg,rImg,img_warp,nodilate_warp,dilate_mask,1);
+             status = stitcher.stitch2(vImg, vImg,rImg,img_warp,nodilate_warp,dilate_mask,1,ConrnerPoint);
              qDebug()<<"Stitching fail.";
          }
      }while(cv::Stitch::OK != status);
@@ -1056,7 +1056,7 @@ void MainWindow::on_CalibrationButton_clicked()
 
     qDebug()<<"Bomb!";
     std::vector<cv::Mat> non_warp,dil_mask;
-    status = stitcher.stitch2(vImg, vImg2,rImg,img_warp2,non_warp,dil_mask,2);
+    status = stitcher.stitch2(vImg, vImg2,rImg,img_warp2,non_warp,dil_mask,2,ConrnerPoint);
 
     ui->progressBar_Merge->setValue(25);
     qDebug()<<"1";
@@ -1074,7 +1074,7 @@ void MainWindow::on_CalibrationButton_clicked()
         }
         else
         {
-            status = stitcher.stitch2(vImg,vImg2, rImg,img_warp2,non_warp,dil_mask,2);
+            status = stitcher.stitch2(vImg,vImg2, rImg,img_warp2,non_warp,dil_mask,2,ConrnerPoint);
             qDebug()<<"Stitching fail.";
         }
     }while(cv::Stitch::OK != status);

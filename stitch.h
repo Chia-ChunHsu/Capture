@@ -85,12 +85,12 @@ public:
     Status estimateTransform(InputArray images, const std::vector<std::vector<Rect> > &rois);
 
     Status composePanorama(OutputArray pano);
-    Status composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice);
+    Status composePanorama2(InputArray otherimages ,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,vector<Point> corners);
     Status composePanorama(InputArray images,OutputArray pano);
-    Status composePanorama2(InputArray images,InputArray otherimages, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice);
+    Status composePanorama2(InputArray images,InputArray otherimages, OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask,std::vector<cv::Mat> &dilate_mask,int choice,vector<Point> corners);
 
     Status stitch(InputArray images, OutputArray pano);
-    Status stitch2(InputArray images, InputArray other,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  ,std::vector<cv::Mat> &dilate_mask,int choice);
+    Status stitch2(InputArray images, InputArray other,OutputArray pano, std::vector<cv::Mat> &img_warp,std::vector<cv::Mat> &nodilate_mask  ,std::vector<cv::Mat> &dilate_mask,int choice, vector<Point> corners);
     Status stitch(InputArray images, const std::vector<std::vector<Rect> > &rois, OutputArray pano);
 
     std::vector<int> component() const { return indices_; }
