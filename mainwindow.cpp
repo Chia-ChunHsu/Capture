@@ -897,10 +897,10 @@ void MainWindow::on_Fake_Buttom_clicked()
     displace.clear();
     //std::vector<cv::Point> displace;
     std::vector<cv::Mat> TempWarp;
-    TempWarp.push_back(frame1);
-    TempWarp.push_back(frame2);
-    TempWarp.push_back(frame3);
-    TempWarp.push_back(frame4);
+    TempWarp.push_back(TWarp[0]);
+    TempWarp.push_back(TWarp[1]);
+    TempWarp.push_back(TWarp[2]);
+    TempWarp.push_back(TWarp[3]);
     qDebug()<<"*********************";
     Fake_r(TempWarp,fakeresult,displace);
 
@@ -971,7 +971,7 @@ void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeres
 
         cv::drawMatches(rImg,keypoints1,temp[number],keypoints2,good_matches,good,cv::Scalar::all(-1),cv::Scalar::all(-1),cv::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         cv::circle(good,cv::Point(x,y),5,cv::Scalar(0,0,255));
-        //cv::imshow("good"+QString::number(number).toStdString(),good);
+        cv::imshow("good"+QString::number(number).toStdString(),good);
         fakeresult.push_back(good);
         cv::Point p = cv::Point(x,y);
         displacement.push_back(p);
@@ -1005,13 +1005,13 @@ void MainWindow::on_ShowButton_clicked()
                 //qDebug()<<"0";
                 int x = displace[number].x;
                 int y = displace[number].y;
-                if((FSWarp[number].at<cv::Vec3b>(j,i)[0]+FSWarp[number].at<cv::Vec3b>(j,i)[1]+FSWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
+                if((FSCWarp[number].at<cv::Vec3b>(j,i)[0]+FSCWarp[number].at<cv::Vec3b>(j,i)[1]+FSCWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
                 {
-                    if(j+x<rImg.rows && i+y<rImg.cols && j+x>=0 && i+y>=0)
+                    if(j+y<rImg.rows && i+x<rImg.cols && j+y>=0 && i+x>=0)
                     {
-                        temp.at<cv::Vec3b>(j+x,i+y)[0] = 255;
-                        temp.at<cv::Vec3b>(j+x,i+y)[1] = 255;
-                        temp.at<cv::Vec3b>(j+x,i+y)[2] = 255;
+                        temp.at<cv::Vec3b>(j+y,i+x)[0] = 255;
+                        temp.at<cv::Vec3b>(j+y,i+x)[1] = 255;
+                        temp.at<cv::Vec3b>(j+y,i+x)[2] = 255;
                     }
                 }
             }
@@ -1402,7 +1402,7 @@ void MainWindow::on_Filter3_sliderMoved(int position)
         {
             //double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
 
-            if(pow(pow(i-FSWarp[2].cols/2,2)+pow(j-FSWarp[3].rows/2,2),0.5)>FSWarp[3].rows/100*position)
+            if(pow(pow(i-FSWarp[2].cols/2,2)+pow(j-FSWarp[2].rows/2,2),0.5)>FSWarp[2].rows/100*position)
             {
                 FSCWarp[2].at<cv::Vec3b>(j,i)[0] = 0;
                 FSCWarp[2].at<cv::Vec3b>(j,i)[1] = 0;
@@ -1420,4 +1420,32 @@ void MainWindow::on_Filter3_sliderMoved(int position)
     ui->labelaffect3->clear();
     ui->labelaffect3->setPixmap(QPixmap::fromImage(qimage2.scaled(ui->labelaffect3->width(),ui->labelaffect3->height(),Qt::KeepAspectRatio)));
     ui->labelaffect3->show();
+}
+
+void MainWindow::on_Filter4_sliderMoved(int position)
+{
+    for(int i = 0;i<FWarp[3].cols;i++)
+    {
+        for(int j=0;j<FWarp[3].rows;j++)
+        {
+            //double pix =(FWarp[0].at<cv::Vec3b>(j, i)[0]+FWarp[0].at<cv::Vec3b>(j, i)[1]+FWarp[0].at<cv::Vec3b>(j, i)[2])/3;
+
+            if(pow(pow(i-FSWarp[3].cols/2,2)+pow(j-FSWarp[3].rows/2,2),0.5)>FSWarp[3].rows/100*position)
+            {
+                FSCWarp[3].at<cv::Vec3b>(j,i)[0] = 0;
+                FSCWarp[3].at<cv::Vec3b>(j,i)[1] = 0;
+                FSCWarp[3].at<cv::Vec3b>(j,i)[2] = 0;
+            }
+            else
+            {
+                FSCWarp[3].at<cv::Vec3b>(j,i)[0] = FSWarp[3].at<cv::Vec3b>(j,i)[0];
+                FSCWarp[3].at<cv::Vec3b>(j,i)[1] = FSWarp[3].at<cv::Vec3b>(j,i)[1];
+                FSCWarp[3].at<cv::Vec3b>(j,i)[2] = FSWarp[3].at<cv::Vec3b>(j,i)[2];
+            }
+        }
+    }
+    QImage qimage2=QImage((const unsigned char*)FSCWarp[3].data,FSCWarp[3].cols,FSCWarp[3].rows,FSCWarp[3].step,QImage::Format_RGB888);
+    ui->labelaffect4->clear();
+    ui->labelaffect4->setPixmap(QPixmap::fromImage(qimage2.scaled(ui->labelaffect4->width(),ui->labelaffect4->height(),Qt::KeepAspectRatio)));
+    ui->labelaffect4->show();
 }

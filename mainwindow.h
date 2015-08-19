@@ -95,6 +95,8 @@ private slots:
 
     void on_Filter3_sliderMoved(int position);
 
+    void on_Filter4_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
 

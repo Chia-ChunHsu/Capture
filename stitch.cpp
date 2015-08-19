@@ -383,8 +383,6 @@ Stitch::Status Stitch::composePanorama2(InputArray images,InputArray otherimages
         for (size_t i = 0; i < imgs_.size(); ++i)
         {
             images_warped[i].convertTo(images_warped_f[i], CV_32F);
-
-
         }
 
         LOGLN("Warping images, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
