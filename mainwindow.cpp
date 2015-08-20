@@ -20,36 +20,87 @@ void MainWindow::on_StartButton_clicked()
     //fit the correct Camera
     int DeviceID[4]={-1,-1,-1,-1};
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    int size = 0;
+    //int size = 0;
     QString VideoName0 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&cb29abf&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     QString VideoName1 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&3225fc09&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     QString VideoName2 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&60715e6&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     QString VideoName3 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&2b7a7730&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global";
     //QString VideoName3 = "@device:pnp:\\\\?\\usb#vid_05ac&pid_8507&mi_02#7&2b7a7730&0&0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global
 
-    foreach (const QCameraInfo &cameraInfo, cameras) {
-        qDebug()<<cameraInfo.deviceName();
-        if(cameraInfo.deviceName() == VideoName0)
+//    foreach (const QCameraInfo &cameraInfo, cameras)
+//    {
+//        qDebug()<<cameraInfo.deviceName()<<cameraInfo.position();
+//        if(cameraInfo.deviceName() == VideoName0)
+//        {
+//            DeviceID[0] = cameraInfo.orientation();
+//            size ++;
+//        }
+//        else if(cameraInfo.deviceName() == VideoName1)
+//        {
+//            DeviceID[1] = cameraInfo.orientation();
+//            size ++;
+//        }
+//        else if(cameraInfo.deviceName() == VideoName2)
+//        {
+//            DeviceID[2] = cameraInfo.orientation();
+//            size ++;
+//        }
+//        else if(cameraInfo.deviceName() == VideoName3)
+//        {
+//            DeviceID[3] = cameraInfo.orientation();
+//            size ++;
+//        }
+//        else
+//        {
+//            size++;
+//        }
+//    }
+    //bool CameraIsOpen = false;
+
+    for(int i=0;i<10;i++)
+    {
+        //qDebug()<<cameraInfo.deviceName()<<cameraInfo.position();
+        if(i>= cameras.size())
         {
-            DeviceID[0] = size;
+
         }
-        else if(cameraInfo.deviceName() == VideoName1)
+        else if(cameras.at(i).deviceName() == VideoName0)
         {
-            DeviceID[1] = size;
+            DeviceID[0] = i;
+            //size ++;
         }
-        else if(cameraInfo.deviceName() == VideoName2)
+        else if(cameras.at(i).deviceName() == VideoName1)
         {
-            DeviceID[2] = size;
+            DeviceID[1] = i;
+            //size ++;
         }
-        else if(cameraInfo.deviceName() == VideoName3)
+        else if(cameras.at(i).deviceName() == VideoName2)
         {
-            DeviceID[3] = size;
+            DeviceID[2] = i;
+            //size ++;
         }
-        size++;
+        else if(cameras.at(i).deviceName() == VideoName3)
+        {
+            DeviceID[3] = i;
+            //size ++;
+        }
+        else
+        {
+            //size++;
+        }
     }
-    qDebug()<<size;
+    //qDebug()<<size;
 
-
+    int multiple = 1;
+    for(int i=0;i<4;i++)
+    {
+        multiple = multiple*DeviceID[i];
+    }
+    if(multiple >= 0)
+    {
+        ui->Camera->setText("Camera Open Success");
+        //return;
+    }
 
     //const std::string video0 = "USB\VID_05AC&PID_8507\6&29250CCB&0&4";
 

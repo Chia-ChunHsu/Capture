@@ -82,6 +82,7 @@ public:
     QSlider *Filter3;
     QSlider *Filter4;
     QPushButton *showTestButton;
+    QLabel *Camera;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -285,6 +286,9 @@ public:
         showTestButton = new QPushButton(centralWidget);
         showTestButton->setObjectName(QStringLiteral("showTestButton"));
         showTestButton->setGeometry(QRect(740, 640, 141, 51));
+        Camera = new QLabel(centralWidget);
+        Camera->setObjectName(QStringLiteral("Camera"));
+        Camera->setGeometry(QRect(20, 670, 161, 41));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -343,6 +347,7 @@ public:
         checkBox3->setText(QApplication::translate("MainWindow", "CheckBox", 0));
         checkBox4->setText(QApplication::translate("MainWindow", "CheckBox", 0));
         showTestButton->setText(QApplication::translate("MainWindow", "Test Show", 0));
+        Camera->setText(QApplication::translate("MainWindow", "TextLabel", 0));
     } // retranslateUi
 
 };
