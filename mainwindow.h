@@ -97,6 +97,8 @@ private slots:
 
     void on_Filter4_sliderMoved(int position);
 
+    void on_showTestButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

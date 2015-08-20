@@ -969,9 +969,9 @@ void MainWindow::Fake_r(std::vector<cv::Mat> &temp,std::vector<cv::Mat> &fakeres
         cv::Mat good;
         qDebug()<<x<<y;
 
-        cv::drawMatches(rImg,keypoints1,temp[number],keypoints2,good_matches,good,cv::Scalar::all(-1),cv::Scalar::all(-1),cv::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        cv::circle(good,cv::Point(x,y),5,cv::Scalar(0,0,255));
-        cv::imshow("good"+QString::number(number).toStdString(),good);
+        //cv::drawMatches(rImg,keypoints1,temp[number],keypoints2,good_matches,good,cv::Scalar::all(-1),cv::Scalar::all(-1),cv::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        //cv::circle(good,cv::Point(x,y),5,cv::Scalar(0,0,255));
+        //cv::imshow("good"+QString::number(number).toStdString(),good);
         fakeresult.push_back(good);
         cv::Point p = cv::Point(x,y);
         displacement.push_back(p);
@@ -994,17 +994,23 @@ void MainWindow::on_ShowButton_clicked()
 //    {
 //        cv::imshow(QString::number(i).toStdString(),FWarp[i]);
 //    }
+    qDebug()<<ConrnerPoint.size();
+    qDebug()<<rImg.rows<<rImg.cols;
     for(int number=0;number<FSWarp.size();number++)
     {
+
         qDebug()<<number;
+        int x = ConrnerPoint[number].x;
+        int y = ConrnerPoint[number].y;
+        qDebug()<<x<<y;
+        //qDebug()<<i+x<<j+y;
         for(int i = 0;i<FSWarp[number].cols;i++)
         {
             for(int j=0;j<FSWarp[number].rows;j++)
             {
                 //qDebug()<<j<<i;
                 //qDebug()<<"0";
-                int x = displace[number].x;
-                int y = displace[number].y;
+
                 if((FSCWarp[number].at<cv::Vec3b>(j,i)[0]+FSCWarp[number].at<cv::Vec3b>(j,i)[1]+FSCWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
                 {
                     if(j+y<rImg.rows && i+x<rImg.cols && j+y>=0 && i+x>=0)
@@ -1448,4 +1454,49 @@ void MainWindow::on_Filter4_sliderMoved(int position)
     ui->labelaffect4->clear();
     ui->labelaffect4->setPixmap(QPixmap::fromImage(qimage2.scaled(ui->labelaffect4->width(),ui->labelaffect4->height(),Qt::KeepAspectRatio)));
     ui->labelaffect4->show();
+}
+
+void MainWindow::on_showTestButton_clicked()
+{
+    cv::Point t1(std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+    //Point br(std::numeric_limits<int>::min(), std::numeric_limits<int>::min());
+    for(int i=0;i<ConrnerPoint.size();i++)
+    {
+        t1.x = std::min(t1.x,ConrnerPoint[i].x);
+        t1.y = std::min(t1.y,ConrnerPoint[i].y);
+    }
+
+    qDebug()<<"Test Begin....";
+    cv::Mat temp;
+
+    cv::Size size(rImg.cols,rImg.rows);
+    temp.create(size,CV_MAKETYPE(temp.type(),3));
+    temp = cv::Scalar::all(0);
+
+    for(int number=0;number<FSCWarp.size();number++)
+    {
+        qDebug()<<number;
+        int x = ConrnerPoint[number].x;
+        int y = ConrnerPoint[number].y;
+
+        for(int i = 0;i<FSCWarp[number].cols;i++)
+        {
+            for(int j=0;j<FSCWarp[number].rows;j++)
+            {
+                if((FSCWarp[number].at<cv::Vec3b>(j,i)[0]+FSCWarp[number].at<cv::Vec3b>(j,i)[1]+FSCWarp[number].at<cv::Vec3b>(j,i)[2])/3 >250)
+                {
+                    if(j+y-t1.y<rImg.rows && i+x-t1.x<rImg.cols && j+y-t1.y>=0 && i+x-t1.x>=0)
+                    {
+                        temp.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[0] = 255;
+                        temp.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[1] = 255;
+                        temp.at<cv::Vec3b>(j+y-t1.y,i+x-t1.x)[2] = 255;
+                    }
+                }
+            }
+        }
+    }
+    cv::imshow("test",temp);
+
+
+
 }

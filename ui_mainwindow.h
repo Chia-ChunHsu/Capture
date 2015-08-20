@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.0
+** Created by: Qt User Interface Compiler version 5.5.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -81,6 +81,7 @@ public:
     QSlider *Filter2;
     QSlider *Filter3;
     QSlider *Filter4;
+    QPushButton *showTestButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -281,6 +282,9 @@ public:
         Filter4->setGeometry(QRect(900, 610, 160, 22));
         Filter4->setValue(99);
         Filter4->setOrientation(Qt::Horizontal);
+        showTestButton = new QPushButton(centralWidget);
+        showTestButton->setObjectName(QStringLiteral("showTestButton"));
+        showTestButton->setGeometry(QRect(740, 640, 141, 51));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -338,6 +342,7 @@ public:
         checkBox2->setText(QApplication::translate("MainWindow", "CheckBox", 0));
         checkBox3->setText(QApplication::translate("MainWindow", "CheckBox", 0));
         checkBox4->setText(QApplication::translate("MainWindow", "CheckBox", 0));
+        showTestButton->setText(QApplication::translate("MainWindow", "Test Show", 0));
     } // retranslateUi
 
 };
